@@ -1144,6 +1144,7 @@ GameObject:
   - component: {fileID: 1039931195}
   - component: {fileID: 1039931194}
   - component: {fileID: 1039931193}
+  - component: {fileID: 1039931196}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1212,6 +1213,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1039931196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039931192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd9df8f906143c14db5751f2633808c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  length: 0
+  currentTime: 0
 --- !u!1 &1104263509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1548,6 +1563,7 @@ GameObject:
   - component: {fileID: 1824370065}
   - component: {fileID: 1824370066}
   - component: {fileID: 1824370067}
+  - component: {fileID: 1824370068}
   m_Layer: 5
   m_Name: TalkSystem
   m_TagString: Untagged
@@ -1591,6 +1607,8 @@ MonoBehaviour:
   characterExpresions:
   - shut: {fileID: 21300000, guid: c014a84221661fe40aed58540b001f24, type: 3}
     talking: {fileID: 21300000, guid: 427dc3a2ecacba443ba8f39c760341c4, type: 3}
+  - shut: {fileID: 21300000, guid: c28af0a184a85a84eaff5f41c56c4be7, type: 3}
+    talking: {fileID: 21300000, guid: 9dd90498ce541ad44aac7469adcd0d55, type: 3}
   volumeThreshold: 1
   source: {fileID: 1824370067}
   testSlider: {fileID: 1104263511}
@@ -1694,6 +1712,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1824370068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824370064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2a34fbcd591e2642971b5d5eba3939b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeExpresionList:
+  - whichExpresion: 1
+    timeToStart: 0
+  - whichExpresion: 0
+    timeToStart: 0.5
+  talker: {fileID: 1824370066}
 --- !u!1 &1888479864
 GameObject:
   m_ObjectHideFlags: 0

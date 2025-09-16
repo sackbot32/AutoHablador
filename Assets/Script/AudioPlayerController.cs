@@ -53,8 +53,10 @@ public class AudioPlayerController : MonoBehaviour
         {
             playIcon.sprite = icons[0];
         }
-    
-        
+
+        InfoSingleton.Instance.length = currentAudioDuration;
+        InfoSingleton.Instance.currentTime = currentTime;
+
     }
 
     public void PlayStop()
