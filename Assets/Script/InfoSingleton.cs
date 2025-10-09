@@ -1,13 +1,69 @@
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InfoSingleton : MonoBehaviour
 {
     public static InfoSingleton Instance;
     public float length;
     public float currentTime;
+    public ExpresionChanger changer;
+    public Talker talker;
+    public Transform timelineTransform;
+    public List<ExpresionTimeSlider> timeSliderList;
+    public ExpresionEditor editor;
+    public Slider playerSlider;
+
+    public AudioPlayerController audioPlayerController;
+
+    public bool deletingNode = false;
 
     private void Awake()
     {
         Instance = this;
+        timeSliderList = new List<ExpresionTimeSlider>();
+        editor.gameObject.SetActive(false);
+        
     }
+
+    public void LoadExpresionForEditor(int whichExpresionToEdit)
+    {
+        editor.isCreatingNewExpresion = false;
+        editor.gameObject.SetActive(true);
+        editor.CurrentExpresionEditing = whichExpresionToEdit;
+        editor.LoadExpresion();
+    }
+
+    public void OpenMenuForNewExpresion()
+    {
+        editor.isCreatingNewExpresion = true;
+        editor.ClearUpInfo();
+        editor.gameObject.SetActive(true);
+    }
+
+    public void ReorderTimeSliderList()
+    {
+        if (!deletingNode)
+        {
+            List<ExpresionTimeSlider> newTimeSlide = new List<ExpresionTimeSlider>();
+            newTimeSlide = timeSliderList.OrderBy(slider => InfoSingleton.Instance.changer.timeExpresionList[slider.expresionInstanceIndex].timeToStart).ToList();
+            timeSliderList = newTimeSlide;
+            List<ExpresionTime> newTime = new List<ExpresionTime>();
+            newTime = InfoSingleton.Instance.changer.timeExpresionList.OrderBy(expTime => expTime.timeToStart).ToList();
+            InfoSingleton.Instance.changer.timeExpresionList = newTime;
+            int n = 0;
+            foreach (ExpresionTimeSlider reorderedSlider in timeSliderList)
+            {
+                reorderedSlider.UpdateExpresion(n, reorderedSlider.imageKnob.color);
+                n++;
+            }
+        }
+        
+        
+
+
+    }
+
 }

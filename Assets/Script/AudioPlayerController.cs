@@ -21,11 +21,8 @@ public class AudioPlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        durationShow.minValue = 0;
-        currentAudioDuration = sourceToControl.clip.length - 0.05f;
-        currentTime = 0;
-        durationShow.maxValue = currentAudioDuration;
-        playIcon.sprite = icons[0];
+        InfoSingleton.Instance.audioPlayerController = this;
+        UpdateDurationSlider();
 
     }
 
@@ -44,7 +41,7 @@ public class AudioPlayerController : MonoBehaviour
         }
         if (currentTime >= currentAudioDuration && !sourceToControl.isPlaying)
         {
-            print("End reached");
+            //print("End reached");
             sourceToControl.Stop();
             playIcon.sprite = icons[2];
         }
@@ -77,6 +74,23 @@ public class AudioPlayerController : MonoBehaviour
             {
                 sourceToControl.Stop();
                 sourceToControl.Play();
+            }
+        }
+    }
+
+    public void UpdateDurationSlider()
+    {
+        durationShow.minValue = 0;
+        currentAudioDuration = sourceToControl.clip.length - 0.05f;
+        InfoSingleton.Instance.length = sourceToControl.clip.length;
+        currentTime = 0;
+        durationShow.maxValue = currentAudioDuration;
+        playIcon.sprite = icons[0];
+        if(InfoSingleton.Instance.timeSliderList.Count > 0)
+        {
+            foreach (ExpresionTimeSlider item in InfoSingleton.Instance.timeSliderList)
+            {
+                item.expresionSlider.maxValue = currentAudioDuration;
             }
         }
     }

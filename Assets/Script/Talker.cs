@@ -9,8 +9,13 @@ using UnityEngine.UI;
 [Serializable]
 public class CharacterPortraits
 {
+    public string expresionName;
+    public Color buttonColor;
     public Sprite shut;
+    public string shutImagePath;
     public Sprite talking;
+    public string talkImagePath;
+    public ExpressionAddingButton ownedButton;
 }
 public class Talker : MonoBehaviour
 {
@@ -25,38 +30,49 @@ public class Talker : MonoBehaviour
     float[] samples;
     public float valueMultiplier = 1;
     public float currentValue;
+    public float characterSize = 1f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         samples = new float[1024];
         StartCoroutine(GetInfo());
+        InfoSingleton.Instance.talker = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(currentValue > 0)
+        if (currentValue > volumeThreshold)
         {
             characterShowing.sprite = characterExpresions[whichExpresion].talking;
         } else
         {
             characterShowing.sprite = characterExpresions[whichExpresion].shut;
         }
-        characterShowing.SetNativeSize();
+
+        float height = characterShowing.sprite.texture.height * characterSize;
+        float width = characterShowing.sprite.texture.width * characterSize;
+
+        characterShowing.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            print("Current playback pos " + source.timeSamples);
+        }
     }
 
     private float GetCurrentVolume()
     {
         float newValue = 0;
         source.clip.GetData(samples, source.timeSamples);
-        foreach (float sample in samples) 
-        { 
+        foreach (float sample in samples)
+        {
             newValue += Mathf.Abs(sample);
         }
         newValue /= 1024;
         newValue *= valueMultiplier;
 
-        if(newValue < 0.001f*valueMultiplier)
+        if (newValue < 0.001f * valueMultiplier)
         {
             newValue = 0f;
         }
@@ -65,14 +81,44 @@ public class Talker : MonoBehaviour
 
     }
 
+    public Texture2D ReturnCurrentCharImage()
+    {
+        return currentValue > 0 ? characterExpresions[whichExpresion].talking.texture : characterExpresions[whichExpresion].shut.texture;
+    }
+
+    public Texture2D ReturnCharImageOnPPos(int pPos)
+    {
+
+        float pPosVolume = 0;
+        pPosVolume = GetVolumeOnPPos(pPos);
+        int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos/ (float)source.clip.frequency);
+        return pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
+    }
+
+    private float GetVolumeOnPPos(int pPos)
+    {
+        float newValue = 0;
+        source.clip.GetData(samples, pPos);
+        foreach (float sample in samples)
+        {
+            newValue += Mathf.Abs(sample);
+        }
+        newValue /= 1024;
+        newValue *= valueMultiplier;
+
+        if (newValue < 0.001f * valueMultiplier)
+        {
+            newValue = 0f;
+        }
+
+        return newValue;
+    }
+
     IEnumerator GetInfo()
     {
         while (true)
         {
-            if (source.isPlaying)
-            {
-                currentValue = GetCurrentVolume();
-            }
+            currentValue = GetCurrentVolume();
             testSlider.value = currentValue;
             //print("Current value " + currentValue);
             yield return new WaitForSeconds(0.1f);
