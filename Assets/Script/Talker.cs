@@ -21,22 +21,32 @@ public class Talker : MonoBehaviour
 {
     public Image characterShowing;
     public int whichExpresion;
+    public Image background;
     public List<CharacterPortraits> characterExpresions;
     [Range(0f, 1f)]
     public float volumeThreshold;
+    public Slider volumeThresholdSlider;
     public AudioSource source;
-    public Slider testSlider;
+    public Slider showLoudnessSlider;
     public AudioMixer mixer;
     float[] samples;
     public float valueMultiplier = 1;
     public float currentValue;
     public float characterSize = 1f;
+
+
+    private Color sliderColor;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         samples = new float[1024];
         StartCoroutine(GetInfo());
         InfoSingleton.Instance.talker = this;
+    }
+
+    public void SetVolumeThreshold(float nThreshoold)
+    {
+        volumeThreshold = nThreshoold;
     }
 
     // Update is called once per frame
@@ -50,9 +60,9 @@ public class Talker : MonoBehaviour
             characterShowing.sprite = characterExpresions[whichExpresion].shut;
         }
 
-        float height = characterShowing.sprite.texture.height * characterSize;
-        float width = characterShowing.sprite.texture.width * characterSize;
-
+        float factorOfChange = characterShowing.sprite.texture.height / 540f;
+        float height = characterShowing.sprite.texture.height/factorOfChange;
+        float width = characterShowing.sprite.texture.width/factorOfChange;
         characterShowing.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -119,7 +129,15 @@ public class Talker : MonoBehaviour
         while (true)
         {
             currentValue = GetCurrentVolume();
-            testSlider.value = currentValue;
+            showLoudnessSlider.value = currentValue;
+            if(currentValue < volumeThreshold)
+            {
+                sliderColor = Color.red;
+            } else
+            {
+                sliderColor = Color.green;
+            }
+            showLoudnessSlider.fillRect.GetComponent<Image>().color = sliderColor;
             //print("Current value " + currentValue);
             yield return new WaitForSeconds(0.1f);
         }

@@ -36,6 +36,11 @@ public class LoadNewAudio : MonoBehaviour
         }
     }
 
+    public void CallLoadAudio()
+    {
+        Loader.Instance.CreateAssurance("Warning! If you change audio your expression nodes will mantain their time, this could lead to problems, are you sure you want do it?", LoadAudio);
+    }
+
     public void LoadAudioFromPath(string path) 
     {
         StartCoroutine(LoadAudioFile(path));
@@ -46,6 +51,7 @@ public class LoadNewAudio : MonoBehaviour
     public void SubtitubeAudio(AudioClip clip)
     {
         InfoSingleton.Instance.talker.source.clip = clip;
+        
         InfoSingleton.Instance.audioPlayerController.UpdateDurationSlider();
     }
 
@@ -66,6 +72,7 @@ public class LoadNewAudio : MonoBehaviour
             AudioClip audioFile = DownloadHandlerAudioClip.GetContent(audioData);
             if (audioFile != null)
             {
+                InfoSingleton.Instance.audioPath = path;
                 SubtitubeAudio(audioFile);
             }
         }

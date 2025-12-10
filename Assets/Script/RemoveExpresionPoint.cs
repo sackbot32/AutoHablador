@@ -32,7 +32,7 @@ public class RemoveExpresionPoint : MonoBehaviour, IPointerClickHandler
                 }
                 if (timeSlide != null)
                 {
-                    timeSlide.UpdateExpresion(newIndex, timeSlide.imageKnob.color);
+                    timeSlide.UpdateExpresion(newIndex, timeSlide.imageKnob.color,timeSlide.expresionName);
                 }
                 if (timeSlide.expresionInstanceIndex == 0)
                 {
@@ -43,7 +43,7 @@ public class RemoveExpresionPoint : MonoBehaviour, IPointerClickHandler
             {
                 if (timeSlide != null)
                 {
-                    timeSlide.UpdateExpresion(0, timeSlide.imageKnob.color);
+                    timeSlide.UpdateExpresion(0, timeSlide.imageKnob.color, timeSlide.expresionName);
                 }
                 timeSlide.expresionSlider.value = 0;
             }
@@ -51,7 +51,7 @@ public class RemoveExpresionPoint : MonoBehaviour, IPointerClickHandler
             {
                 if (timeSlide != null)
                 {
-                    timeSlide.UpdateExpresion(timeSlide.expresionInstanceIndex - 1, timeSlide.imageKnob.color);
+                    timeSlide.UpdateExpresion(timeSlide.expresionInstanceIndex - 1, timeSlide.imageKnob.color, timeSlide.expresionName);
                 }
             }
             n++;

@@ -12,12 +12,14 @@ public class InfoSingleton : MonoBehaviour
     public ExpresionChanger changer;
     public Talker talker;
     public Transform timelineTransform;
+    public Transform slidersContainer;
     public List<ExpresionTimeSlider> timeSliderList;
     public ExpresionEditor editor;
     public Slider playerSlider;
-
+    public SaveFile saveFile;
+    public LoadNewAudio audioLoader;
     public AudioPlayerController audioPlayerController;
-
+    public string audioPath;
     public bool deletingNode = false;
 
     private void Awake()
@@ -56,7 +58,7 @@ public class InfoSingleton : MonoBehaviour
             int n = 0;
             foreach (ExpresionTimeSlider reorderedSlider in timeSliderList)
             {
-                reorderedSlider.UpdateExpresion(n, reorderedSlider.imageKnob.color);
+                reorderedSlider.UpdateExpresion(n, reorderedSlider.imageKnob.color, reorderedSlider.expresionName);
                 n++;
             }
         }

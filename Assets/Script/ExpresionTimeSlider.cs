@@ -11,6 +11,7 @@ public class ExpresionTimeSlider : MonoBehaviour
     [SerializeField]
     public Image imageKnob;
     public RemoveExpresionPoint pointRemover;
+    public string expresionName;
     private void Start()
     {
         expresionSlider = GetComponent<Slider>();
@@ -45,8 +46,9 @@ public class ExpresionTimeSlider : MonoBehaviour
         }
     }
 
-    public void UpdateExpresion(int newIndex, Color newColor)
+    public void UpdateExpresion(int newIndex, Color newColor, string nName)
     {
+        expresionName = nName;
         expresionInstanceIndex = newIndex;
         expresionIndexText.text = expresionInstanceIndex.ToString();
         imageKnob.color = newColor;

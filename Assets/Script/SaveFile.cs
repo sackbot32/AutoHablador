@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
+using System;
 
+[Serializable]
 public class SaveClass
 {
     public string name;
+    public float volumeSensitivity;
     public List<CharacterPortraits> characterPortraits;
     public List<ExpresionTime> expTimes;
     public string audioPath;
@@ -19,58 +24,84 @@ public class SaveClass
 public class SaveFile : MonoBehaviour
 {
 
-    static string filePath;
 
-    public InputField nameField;
+    public string projectName;
     public ExpresionButtonCreator buttonCreator;
+    public List<CharacterPortraits> defaultCharacterPortraits;
+
     private void Awake()
     {
-        filePath = Application.persistentDataPath;
+
     }
     public void SaveToJson()
     {
         SaveClass save = new SaveClass();
-        save.name = nameField.text;
+        save.name = projectName;
 
-        Directory.CreateDirectory(filePath + "\\" + save.name);
+        Directory.CreateDirectory(Loader.Instance.saveFilePath + "\\" + save.name);
         save.characterPortraits = InfoSingleton.Instance.talker.characterExpresions;
+        save.volumeSensitivity = InfoSingleton.Instance.talker.volumeThreshold;
         foreach (CharacterPortraits invPor in save.characterPortraits)
         {
-            if(invPor.shutImagePath.Length <= 0)
+            if(invPor != null)
             {
-                byte[] shutImageData = invPor.shut.texture.EncodeToPNG();
-                string path = filePath + "\\" + save.name + "\\" + invPor.expresionName + "-shut.png";
-                System.IO.File.WriteAllBytes(path, shutImageData);
-                invPor.shutImagePath = path;
+                string expresionPath = Loader.Instance.saveFilePath + "\\" + save.name + "\\" + invPor.expresionName;
+                if (!System.IO.File.Exists(expresionPath))
+                {
+                    Directory.CreateDirectory(expresionPath);
+                }
+                if (invPor.shutImagePath == null)
+                {
+                    invPor.shutImagePath = "";
+                }
+                if (invPor.shutImagePath.Length <= 0)
+                {
+                    byte[] shutImageData = invPor.shut.texture.EncodeToPNG();
+                    string path = expresionPath + "\\" + invPor.expresionName + "-shut.png";
+                    System.IO.File.WriteAllBytes(path, shutImageData);
+                    invPor.shutImagePath = path;
 
+                }
+                if (invPor.talkImagePath == null)
+                {
+                    invPor.talkImagePath = "";
+                }
+                if (invPor.talkImagePath.Length <= 0)
+                {
+                    byte[] talkImageData = invPor.talking.texture.EncodeToPNG();
+                    string path = expresionPath + "\\" + invPor.expresionName + "-talk.png";
+                    System.IO.File.WriteAllBytes(path, talkImageData);
+                    invPor.talkImagePath = path;
+                }
             }
-            if (invPor.talkImagePath.Length <= 0)
-            {
-                byte[] talkImageData = invPor.talking.texture.EncodeToPNG();
-                string path = filePath + "\\" + save.name + "\\" + invPor.expresionName + "-talk.png";
-                System.IO.File.WriteAllBytes(path, talkImageData);
-                invPor.talkImagePath = path;
-            }
+            
             
         }
         save.expTimes = InfoSingleton.Instance.changer.timeExpresionList;
-        string audioPath = filePath + "\\" + save.name + "\\currentAudio.wav";
-        SavWav.Save(audioPath, InfoSingleton.Instance.talker.source.clip);
-        save.audioPath = audioPath;
-        save.jsonPath = filePath + "\\" + save.name + "\\" + "saveOf" + save.name + ".json";
+        //string audioPath = filePath + "\\" + save.name + "\\currentAudio.wav";
+        save.audioPath = InfoSingleton.Instance.audioPath;
+        save.jsonPath = Loader.Instance.saveFilePath + "\\" + save.name + "\\" + "saveOf" + save.name + ".json";
         string data = JsonUtility.ToJson(save);
-        System.IO.File.WriteAllText(save.jsonPath, data);
+        try
+        {
+            System.IO.File.WriteAllText(save.jsonPath, data);
+        } catch (IOException ex)
+        {
+            print(ex);
+        }
     }
 
 
     public void LoadJson(string name)
     {
-        if(System.IO.File.Exists(filePath + "\\" + name + "\\" + "saveOf" + name + ".json"))
+        if(System.IO.File.Exists(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json"))
         {
             //filePath + "\\" + name + "\\" + "saveOf" + name + ".json"
-            string json = new StreamReader(filePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
+            string json = new StreamReader(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
-            LoadNewAudio.instance.LoadAudioFromPath(load.audioPath);
+            InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
+            InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
             //Clear expresion for new ones
             InfoSingleton.Instance.talker.characterExpresions = new List<CharacterPortraits>();
             //Get expresions
@@ -95,13 +126,54 @@ public class SaveFile : MonoBehaviour
             }
 
             //And now we create new ones;
-            StartCoroutine(PutSliders(load.expTimes));
+            if(load.expTimes.Count > 0)
+            {
+                StartCoroutine(PutSliders(load.expTimes));
+            }
+            projectName = name;
+            
 
         } else
         {
-            //TODO create popup
-            print("Doesnt exist ERROR CREATE POPUP at " + filePath + "\\" + name + "\\" + "saveOf" + name + ".json");
+            Loader.Instance.CreateNotif("Save at " + Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json" + " not found" , NotifType.Error, "OK");
         }
+    }
+
+    public void NewProject(string name, string audioPath = "", string expresionJsonPath = "")
+    {
+        if(audioPath.Length <= 0)
+        {
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "\\Default.wav" );
+            InfoSingleton.Instance.audioPath = Loader.Instance.filePath + "\\Default.wav";
+        } else
+        {
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(audioPath);
+            InfoSingleton.Instance.audioPath = audioPath;
+        }
+            //Clear expresion for new ones
+        InfoSingleton.Instance.talker.characterExpresions = new List<CharacterPortraits>();
+        if(expresionJsonPath.Length <= 0)
+        {
+            //Get expresions
+            foreach (CharacterPortraits characterPortraits in defaultCharacterPortraits)
+            {
+                InfoSingleton.Instance.talker.characterExpresions.Add(characterPortraits);
+            }
+        } else
+        {
+            string json = new StreamReader(expresionJsonPath).ReadToEnd();
+            SaveClass load = JsonUtility.FromJson<SaveClass>(json);
+            foreach (CharacterPortraits characterPortraits in load.characterPortraits)
+            {
+                Texture2D talk = ImageUnit.LoadImage(characterPortraits.talkImagePath);
+                Texture2D shut = ImageUnit.LoadImage(characterPortraits.shutImagePath);
+                characterPortraits.talking = Sprite.Create(talk, new Rect(0, 0, talk.width, talk.height), new Vector2(0, 0));
+                characterPortraits.shut = Sprite.Create(shut, new Rect(0, 0, shut.width, shut.height), new Vector2(0, 0));
+                InfoSingleton.Instance.talker.characterExpresions.Add(characterPortraits);
+            }
+        }
+        buttonCreator.CreateButtons();
+        projectName = name;
     }
 
     IEnumerator PutSliders(List<ExpresionTime> loaded)
@@ -113,5 +185,46 @@ public class SaveFile : MonoBehaviour
             slider.ChangeInstanceTimePoint(time.timeToStart);
         }
         InfoSingleton.Instance.changer.timeExpresionList = loaded;
+        InfoSingleton.Instance.timeSliderList[0].transform.position = InfoSingleton.Instance.timeSliderList[InfoSingleton.Instance.timeSliderList.Count - 1].transform.position;
+    }
+
+    
+
+    public Task AsyncSave()
+    {
+        return Task.Run(() => SaveToJson());
+    }
+
+    public async void SaveAndQuitAsync()
+    {
+        await AsyncSave();
+        QuitToMenu();
+    }
+
+    public void CallQuitToMenu()
+    {
+        Loader.Instance.CreateAssurance("Are you sure you want to quit without saving?",QuitToMenu);
+    }
+    public void QuitToMenu()
+    {
+        StartCoroutine(QuitToMenuCoroutine());
+    }
+    public IEnumerator QuitToMenuCoroutine()
+    {
+        InfoSingleton.Instance = null;
+        Loader.Instance.LoadingAnim(true,Loader.Instance.loadImageAnimDuration);
+        yield return new WaitForSeconds(Loader.Instance.loadImageAnimDuration);
+        AsyncOperation sceneLoad = SceneManager.LoadSceneAsync(0);
+
+        while (sceneLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+        while (InfoSingleton.Instance != null)
+        {
+            print("LOADING");
+            yield return null;
+        }
+        Loader.Instance.LoadingAnim(false);
     }
 }

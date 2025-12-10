@@ -13,6 +13,11 @@ public class ExpresionColorEditor : MonoBehaviour
 
     }
 
+    public void SetReverseActive(bool setReverse)
+    {
+        gameObject.SetActive(!setReverse);
+    }
+
     public void UpdateColorInfo()
     {
         

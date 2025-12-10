@@ -27,7 +27,7 @@ public class ExpresionChanger : MonoBehaviour
 
     void Update()
     {
-        if (timeExpresionList.Count > 0) 
+        if (timeExpresionList.Count > 0 && InfoSingleton.Instance != null) 
         { 
             for (int i = 0; i < timeExpresionList.Count; i++)
             {
@@ -69,7 +69,7 @@ public class ExpresionChanger : MonoBehaviour
 
                 if (time >= aTime && time < bTime)
                 {
-                    print("Reaches actual expresion chosen which is ? " + timeExpresionList[i].whichExpresion);
+                    //print("Reaches actual expresion chosen which is ? " + timeExpresionList[i].whichExpresion);
                     return timeExpresionList[i].whichExpresion;
                 }
             }

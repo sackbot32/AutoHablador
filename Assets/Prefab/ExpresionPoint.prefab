@@ -142,8 +142,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: c2f831651ee63a54084f791d00d7a838, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -266,7 +266,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 1191a68f39745284bb88b7dcf257fa6f, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -435,6 +435,7 @@ MonoBehaviour:
   expresionIndexText: {fileID: 3896627253277004084}
   imageKnob: {fileID: 7227916270141980250}
   pointRemover: {fileID: 757955290746354984}
+  expresionName: 
 --- !u!1 &6544773321998365337
 GameObject:
   m_ObjectHideFlags: 0

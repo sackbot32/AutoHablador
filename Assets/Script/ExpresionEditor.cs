@@ -58,8 +58,7 @@ public class ExpresionEditor : MonoBehaviour
             
         } else
         {
-            //TODO make a pop up
-            print("NOT ALL FULFILLED");
+            Loader.Instance.CreateNotif("Please add images and a name", NotifType.Error, "OK");
         }
     }
 

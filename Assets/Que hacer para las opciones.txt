@@ -1,0 +1,6 @@
+Poner guardado en una carpeta mas profunda
+Crear una carpeta para las imágenes en concreto
+Crear otra carpeta para guardar los "personajes"
+En nuevo proyecto debería aparecer una pagina de opciones para coger "personajes" de la lista o copiarlos de otros guardados
+Opción para el nombre y el audio
+

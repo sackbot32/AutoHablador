@@ -1,9 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
+using System.Drawing;
 using System.IO;
-using ImageMagick;
+using System.Linq;
+using Emgu.CV;
+using FFMpegCore;
+using FFMpegCore.Enums;
+using FFMpegCore.Helpers;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class AlreadyGreenedImage 
+{
+    public Texture2D original;
+    public Texture2D greenedImage;
+
+    public AlreadyGreenedImage(Texture2D nOg, Texture2D nGImg)
+    {
+        original = nOg;
+        greenedImage = nGImg;
+    }
+    public AlreadyGreenedImage()
+    {
+
+    }
+}
+
 
 public class CharRenderer : MonoBehaviour
 {
@@ -11,85 +34,264 @@ public class CharRenderer : MonoBehaviour
     [HideInInspector]
     public List<Texture2D> renderedTextures = new List<Texture2D>();
     public int framesPerSecond = 30;
+    public GameObject loadingBarParent;
+    public Slider progressBar;
+    public Text whatIsLoading;
+    private string loadingTextBase = "Currently Loading: \n";
+    private Size currentSize;
+    public bool greenScreen;
+    public bool audioOnRender;
+    private List<AlreadyGreenedImage> greenedImages;
+    private List<Mat> textureMats;
+    List<string> imagePathList;
+    string targetPath;
+    private string videoFileExtension = "mov";
 
+    private Coroutine currentCoroutine;
 
-    public void RenderByRecord()
+    private void Start()
     {
+        loadingBarParent.SetActive(false);
+    }
+
+    public void SetGreenScreen(bool green)
+    {
+        greenScreen = green;
+    }
+
+    public void SetAudioRender(bool auidi)
+    {
+        audioOnRender = auidi;
+    }
+
+    public void SetFramesPerSecond(string fps)
+    {
+        framesPerSecond = int.Parse(fps);
+    }
+    public void SelectFileToSaveRender()
+    {
+        Stream stream;
+        videoFileExtension = greenScreen ? "mp4" : "mov";
+        System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+        string title = "Select where to put your rendered gif";
+        sfd.Title = title;
+        sfd.Filter =  $"{videoFileExtension} (*.{videoFileExtension}) | *.{videoFileExtension}";
+        sfd.FilterIndex = 1;
+        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            stream = sfd.OpenFile();
+            if (stream != null)
+            {
+                FileStream file = stream as FileStream;
+                if (file != null)
+                {
+                    RenderByFiles(file.Name);
+
+                }
+                stream.Close();
+            }
+        }
 
     }
-    public void RenderByFiles()
+    public void RenderByFiles(string path)
     {
+        imagePathList = new List<string>();
+        targetPath = path;
         renderedTextures.Clear();
-        StartCoroutine(RenderCouritine());
+        loadingBarParent.SetActive(true);
+        whatIsLoading.text = loadingTextBase + "Starting";
+        progressBar.minValue = 0;
+        progressBar.value = 0;
+        int maxValue = 0;
+        maxValue = InfoSingleton.Instance.talker.source.clip.samples / (InfoSingleton.Instance.talker.source.clip.frequency / framesPerSecond);
+        maxValue += 2;
+        progressBar.maxValue = maxValue;
+        textureMats = new List<Mat>();
+        greenedImages = new List<AlreadyGreenedImage>();
+        currentCoroutine = StartCoroutine(RenderCouritine(path, UnityEngine.Color.green));
         
     }
 
-    IEnumerator RenderCouritine()
+    public void RenderByFiles(string path, UnityEngine.Color whichColor, bool nGreenScreen = false, bool usesAudio = false)
     {
-        List<string> imagePathList = new List<string>();
+        imagePathList = new List<string>();
+        targetPath = path;
+        greenScreen = nGreenScreen;
+        audioOnRender = usesAudio;
+        renderedTextures.Clear();
+        loadingBarParent.SetActive(true);
+        whatIsLoading.text = loadingTextBase + "Starting";
+        progressBar.minValue = 0;
+        progressBar.value = 0;
+        int maxValue = 0;
+        maxValue = InfoSingleton.Instance.talker.source.clip.samples / (InfoSingleton.Instance.talker.source.clip.frequency / framesPerSecond);
+        maxValue += 2;
+        progressBar.maxValue = maxValue;
+        textureMats = new List<Mat>();
+        greenedImages = new List<AlreadyGreenedImage>();
+        currentCoroutine = StartCoroutine(RenderCouritine(path,whichColor));
+
+    }
+
+    public IEnumerator RenderCouritine(string path,UnityEngine.Color colorBackground)
+    {
+
+        imagePathList = new List<string>();
+        currentSize = new Size(InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).width, InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).height);
+        
         int num = 0;
+        int total = (int)progressBar.maxValue - 2;
+        string temporalFilesPath = path.Substring(0,path.LastIndexOf("\\"));
+        print("temporalFiles " + temporalFilesPath);
         print("Starting render");
         for (int i = 0; i < InfoSingleton.Instance.talker.source.clip.samples; i = i + InfoSingleton.Instance.talker.source.clip.frequency/framesPerSecond)
         {
+
             print("Rendering image number " + num);
-            renderedTextures.Add(InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i));
-            byte[] imageData = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i).EncodeToPNG();
+            whatIsLoading.text = loadingTextBase + "Rendering image number " + num + "/" + total;
+            Texture2D starter = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i);
+            Texture2D beingSaved;
+            if (greenScreen)
+            {
+                AlreadyGreenedImage alreadyGreen = greenedImages.Find(x => x.original == starter);
+                if (alreadyGreen != null)
+                {
+                    beingSaved = alreadyGreen.greenedImage;
+                } else
+                {
+                    beingSaved = FromTransparentToColor(starter, colorBackground);
+                }
+                    
+            } else
+            {
+                beingSaved = starter;
+            }
+            renderedTextures.Add(beingSaved);
+            byte[] tempImageData = beingSaved.EncodeToPNG();
+            Mat nMat = new Mat();
+            CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
+            textureMats.Add(nMat);
             string numberStringed = num.ToString("000");
-            System.IO.File.WriteAllBytes("F:\\PruebaAutoHablador\\1\\imagenNumero-" + numberStringed + ".png", imageData);
-            imagePathList.Add("F:\\PruebaAutoHablador\\1\\imagenNumero-" + numberStringed + ".png");
+            System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
+            imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");
             num++;
+            progressBar.value += 1;
             yield return new WaitForSeconds(0.01f);
         }
         if(imagePathList.Count > 0)
         {
-            TurnImagesToVideo(imagePathList);
+            progressBar.value += 1;
+            string whichCodec = greenScreen ? "libx264" : "prores_ks";
+            TurnImagesToFFMpeg(path,imagePathList, whichCodec);
+        } else
+        {
+            //TODO substitute with icon
+            Loader.Instance.CreateNotif("No images present", NotifType.Error, "OK");
+            loadingBarParent.SetActive(false);
         }
     }
 
-    private void TurnImagesToVideo(List<string> imagePathList)
+    public void CancelRender()
     {
-        
-        MagickImageCollection imageCollection = new MagickImageCollection();
-        //int z = 0;
-        foreach (string imagePath in imagePathList)
-        {
-            MagickImage imageToAdd = new MagickImage(imagePath);
-
-            uint delay = 0;
-
-            delay = (uint) Mathf.RoundToInt(100f / (float)framesPerSecond);
-
-            print("El delay es " + delay);
-
-            imageToAdd.AnimationDelay = delay;
-            imageToAdd.GifDisposeMethod = GifDisposeMethod.Previous;
-            imageCollection.Add(imageToAdd);
-        }
-        imageCollection.OptimizeTransparency();
-        //imageCollection.Optimize();
-
-        print("Turning to video");
-
-        imageCollection.Write("F:\\PruebaAutoHablador\\1\\joinedVideo.gif");
-
-
-        
+        StopCoroutine(currentCoroutine);
         foreach (string path in imagePathList)
         {
             System.IO.File.Delete(path);
         }
-        print("Done, video in F:\\PruebaAutoHablador\\1\\joinedVideo.gif");
+        System.IO.File.Delete(targetPath);
     }
 
-    
+    private void TurnImagesToFFMpeg(string savePath, List<string> imagePathList,string codec)
+    {
+        string onlyVideoPath = savePath.Substring(0, savePath.LastIndexOf("\\")) + "\\tempVid." + videoFileExtension;
+        if (audioOnRender)
+        {
+            var video = JoinImageSequenceWithCodec(onlyVideoPath, codec, framesPerSecond,imagePathList.ToArray());
+            //FFMpegArguments.FromFileInput(imagePathList.ToArray(),false,options => options.WithFramerate(framesPerSecond).
+            //WithVideoCodec(FFMpeg.GetCodec("apcn"))).OutputToFile(savePath);
+            FFMpeg.ReplaceAudio(onlyVideoPath, InfoSingleton.Instance.audioPath,savePath);
+            
+        } else
+        {
+            var video = JoinImageSequenceWithCodec(savePath, codec, framesPerSecond, imagePathList.ToArray());
+        }
+        foreach (string path in imagePathList)
+        {
+            System.IO.File.Delete(path);
+        }
+        if (System.IO.File.Exists(onlyVideoPath))
+        {
+            System.IO.File.Delete(onlyVideoPath);
+        }
+        progressBar.value += 1;
+        whatIsLoading.text = loadingTextBase + "Images turned into video";
+        loadingBarParent.SetActive(false);
+        Loader.Instance.CreateNotif("Video rendered at: " + savePath, NotifType.Success, "OK");
+    }
 
-    //Get audio
-    //string audioPath = "F:\\PruebaAutoHablador\\1\\extractedAudio.wav";
-    //print("Extracting audio");
-    //float[] samples = new float[InfoSingleton.Instance.talker.source.clip.samples];
-    //InfoSingleton.Instance.talker.source.clip.GetData(samples, 0);
-    //byte[] audioData = BitConverter.DoubleToInt64Bits(samples);
-    //print("Adding audio");
-    //FFMpeg.ReplaceAudio("F:\\PruebaAutoHablador\\1\\joinedVideo.mp4",audioPath, "F:\\PruebaAutoHablador\\1\\joinedVideo.mp4");
+    private Texture2D FromTransparentToColor(Texture2D starter, UnityEngine.Color selectedColor)
+    {
+        Texture2D toReturn = starter;
+        for (int x = 0; x < currentSize.Width; x++)
+        {
+            for (int y = 0; y < currentSize.Height; y++)
+            {
+                UnityEngine.Color pixelColor = toReturn.GetPixel(x, y);
+                if (pixelColor.a <= 0f)
+                {
+                    toReturn.SetPixel(x, y, selectedColor);
+                } else if(pixelColor.a > 0 && pixelColor.a <= 1f)
+                {
+                    toReturn.SetPixel(x, y, new UnityEngine.Color(pixelColor.r,pixelColor.g,pixelColor.b,1));
+                }
+            }
+        }
+
+        return toReturn;
+    }
+
+
+    public bool JoinImageSequenceWithCodec(string output, string videoCodec, double frameRate = 30, params string[] images)
+    {
+        var fileExtensions = images.Select(Path.GetExtension).Distinct().ToArray();
+        if (fileExtensions.Length != 1)
+        {
+            throw new ArgumentException("All images must have the same extension", nameof(images));
+        }
+
+        var fileExtension = fileExtensions[0].ToLowerInvariant();
+        int? width = null, height = null;
+
+        var tempFolderName = Path.Combine(GlobalFFOptions.Current.TemporaryFilesFolder, Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempFolderName);
+
+        try
+        {
+            var index = 0;
+            foreach (var imagePath in images)
+            {
+                var analysis = FFProbe.Analyse(imagePath);
+                FFMpegHelper.ConversionSizeExceptionCheck(analysis.PrimaryVideoStream!.Width, analysis.PrimaryVideoStream!.Height);
+                width ??= analysis.PrimaryVideoStream.Width;
+                height ??= analysis.PrimaryVideoStream.Height;
+
+                var destinationPath = Path.Combine(tempFolderName, $"{index++.ToString().PadLeft(9, '0')}{fileExtension}");
+                File.Copy(imagePath, destinationPath);
+            }
+
+            return FFMpegArguments
+                .FromFileInput(Path.Combine(tempFolderName, $"%09d{fileExtension}"), false, options => options
+                    .WithFramerate(frameRate))
+                .OutputToFile(output, true, options => options
+                    .Resize(width!.Value, height!.Value)
+                    .WithFramerate(frameRate).WithVideoCodec(videoCodec).WithVariableBitrate(5))
+                .ProcessSynchronously();
+        }
+        finally
+        {
+            Directory.Delete(tempFolderName, true);
+        }
+    }
+
 
 }

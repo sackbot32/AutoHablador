@@ -50,10 +50,15 @@ public class AudioPlayerController : MonoBehaviour
         {
             playIcon.sprite = icons[0];
         }
-
-        InfoSingleton.Instance.length = currentAudioDuration;
-        InfoSingleton.Instance.currentTime = currentTime;
-
+        if(InfoSingleton.Instance != null)
+        {
+            InfoSingleton.Instance.length = currentAudioDuration;
+            InfoSingleton.Instance.currentTime = currentTime;
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayStop();
+        }
     }
 
     public void PlayStop()
@@ -81,6 +86,7 @@ public class AudioPlayerController : MonoBehaviour
     public void UpdateDurationSlider()
     {
         durationShow.minValue = 0;
+        print("Duracion " + sourceToControl.clip.length);
         currentAudioDuration = sourceToControl.clip.length - 0.05f;
         InfoSingleton.Instance.length = sourceToControl.clip.length;
         currentTime = 0;

@@ -23,22 +23,23 @@ public class ExpressionAddingButton : MonoBehaviour
     {
         InfoSingleton.Instance.changer.AddExpresion(whichExpresion, InfoSingleton.Instance.currentTime);
         GameObject newPoint = Instantiate(expresionPoint,Vector2.zero,Quaternion.identity);
-        newPoint.transform.SetParent(InfoSingleton.Instance.timelineTransform);
+        newPoint.transform.SetParent(InfoSingleton.Instance.slidersContainer);
         newPoint.transform.localScale = Vector3.one;
         newPoint.GetComponent<RectTransform>().position = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().position + new Vector3(0,204f,0);
-        newPoint.GetComponent<RectTransform>().sizeDelta = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().sizeDelta - new Vector2(160,0);
-        newPoint.GetComponent<ExpresionTimeSlider>().UpdateExpresion(InfoSingleton.Instance.changer.timeExpresionList.Count -1, buttonColor);
+        newPoint.GetComponent<RectTransform>().sizeDelta = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().sizeDelta - new Vector2(0,0);
+        newPoint.GetComponent<ExpresionTimeSlider>().UpdateExpresion(InfoSingleton.Instance.changer.timeExpresionList.Count -1, buttonColor, InfoSingleton.Instance.talker.characterExpresions[whichExpresion].expresionName);
+       
         sliders.Add(newPoint.GetComponent<ExpresionTimeSlider>());
     }
     public ExpresionTimeSlider AddExpresion(float timeDuration)
     {
         InfoSingleton.Instance.changer.AddExpresion(whichExpresion, timeDuration);
         GameObject newPoint = Instantiate(expresionPoint,Vector2.zero,Quaternion.identity);
-        newPoint.transform.SetParent(InfoSingleton.Instance.timelineTransform);
+        newPoint.transform.SetParent(InfoSingleton.Instance.slidersContainer);
         newPoint.transform.localScale = Vector3.one;
         newPoint.GetComponent<RectTransform>().position = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().position + new Vector3(0,204f,0);
-        newPoint.GetComponent<RectTransform>().sizeDelta = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().sizeDelta - new Vector2(160,0);
-        newPoint.GetComponent<ExpresionTimeSlider>().UpdateExpresion(InfoSingleton.Instance.changer.timeExpresionList.Count -1, buttonColor);
+        newPoint.GetComponent<RectTransform>().sizeDelta = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().sizeDelta - new Vector2(0,0);
+        newPoint.GetComponent<ExpresionTimeSlider>().UpdateExpresion(InfoSingleton.Instance.changer.timeExpresionList.Count -1, buttonColor, InfoSingleton.Instance.talker.characterExpresions[whichExpresion].expresionName);
         sliders.Add(newPoint.GetComponent<ExpresionTimeSlider>());
         return newPoint.GetComponent<ExpresionTimeSlider>();
     }
@@ -47,6 +48,11 @@ public class ExpressionAddingButton : MonoBehaviour
     {
         whichExpresion = newExpresion;
         buttonName.text = newButtonName;
+    }
+
+    public void CanDelete(bool can)
+    {
+        transform.GetChild(2).gameObject.SetActive(can);
     }
 
     public void UpdateColor(Color newColor)
@@ -62,8 +68,23 @@ public class ExpressionAddingButton : MonoBehaviour
         {
             if(slider != null)
             {
-                slider.UpdateExpresion(slider.expresionInstanceIndex, newColor);
+                slider.UpdateExpresion(slider.expresionInstanceIndex, newColor,slider.expresionName);
             }
         }
+    }
+
+    public void CallDeleteExpresion()
+    {
+        Loader.Instance.CreateAssurance("Are you sure you want to delete this expression? ", DeleteExpression);
+    }
+
+    public void DeleteExpression()
+    {
+        InfoSingleton.Instance.talker.characterExpresions.RemoveAt(whichExpresion);
+        if(InfoSingleton.Instance.talker.whichExpresion == whichExpresion)
+        {
+            InfoSingleton.Instance.talker.whichExpresion = 0;
+        }
+        transform.parent.gameObject.GetComponent<ExpresionButtonCreator>().CreateButtons();
     }
 }

@@ -72,7 +72,7 @@ public class ImageUnit : MonoBehaviour
                     }
                     else
                     {
-                        print("ERROR ERROR");
+                        Loader.Instance.CreateNotif("No image found in file", NotifType.Error, "OK");
                     }
 
                 }
