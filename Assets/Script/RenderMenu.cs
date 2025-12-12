@@ -44,9 +44,9 @@ public class RenderMenu : MonoBehaviour
 
     public void SetPath()
     {
-        Stream stream;
+        //Stream stream;
         string videoFileExtension = greenScreen ? "mp4" : "mov";
-        System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+        //System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
         string title = "Select where to put your rendered gif";
         string defaultFileName = "";
         if (fileNameInput.text.Length <= 0)
@@ -57,26 +57,35 @@ public class RenderMenu : MonoBehaviour
         {
             defaultFileName = fileNameInput.text + "." + videoFileExtension;
         }
-        sfd.FileName = defaultFileName;
-        sfd.Title = title;
-        sfd.Filter = $"{videoFileExtension} (*.{videoFileExtension}) | *.{videoFileExtension}";
-        sfd.FilterIndex = 1;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //sfd.FileName = defaultFileName;
+        //sfd.Title = title;
+        //sfd.Filter = $"{videoFileExtension} (*.{videoFileExtension}) | *.{videoFileExtension}";
+        //sfd.FilterIndex = 1;
+        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //{
+        //    stream = sfd.OpenFile();
+        //    if (stream != null)
+        //    {
+        //        FileStream file = stream as FileStream;
+        //        if (file != null)
+        //        {
+        //            pathWithoutEnd = file.Name.Substring(0, file.Name.LastIndexOf("\\") + 1);
+        //            print(pathWithoutEnd);
+        //            string filedotted = file.Name.Substring(file.Name.LastIndexOf("\\") + 1).Substring(0);
+        //            fileName = filedotted.Substring(0,filedotted.LastIndexOf('.'));
+        //            fileNameInput.text = fileName;
+        //        }
+        //        stream.Close();
+        //    }
+        //}
+        string savePath = FileBrowserStatic.SaveFile(title, $"{videoFileExtension}(*.{videoFileExtension})|*.{videoFileExtension}", defaultFileName, videoFileExtension);
+        if(savePath != string.Empty && savePath != null)
         {
-            stream = sfd.OpenFile();
-            if (stream != null)
-            {
-                FileStream file = stream as FileStream;
-                if (file != null)
-                {
-                    pathWithoutEnd = file.Name.Substring(0, file.Name.LastIndexOf("\\") + 1);
-                    print(pathWithoutEnd);
-                    string filedotted = file.Name.Substring(file.Name.LastIndexOf("\\") + 1).Substring(0);
-                    fileName = filedotted.Substring(0,filedotted.LastIndexOf('.'));
-                    fileNameInput.text = fileName;
-                }
-                stream.Close();
-            }
+            pathWithoutEnd = savePath.Substring(0, savePath.LastIndexOf("\\") + 1);
+            print(pathWithoutEnd);
+            string filedotted = savePath.Substring(savePath.LastIndexOf("\\") + 1).Substring(0);
+            fileName = filedotted.Substring(0, filedotted.LastIndexOf('.'));
+            fileNameInput.text = fileName;
         }
     }
 

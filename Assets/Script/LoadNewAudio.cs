@@ -14,25 +14,30 @@ public class LoadNewAudio : MonoBehaviour
     }
     public void LoadAudio()
     {
-        Stream stream;
-        System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
-        string title = "Select new audio";
-        sfd.Title = title;
-        sfd.Filter = "Audios (*.mp3;*.wav) | *.mp3; *.wav | All files (*.*)|*.*";
-        sfd.FilterIndex = 1;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            stream = sfd.OpenFile();
-            if (stream != null)
-            {
-                FileStream file = stream as FileStream;
-                if (file != null)
-                {
-                    StartCoroutine(LoadAudioFile(file.Name));
+        //Stream stream;
+        //System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
+        //string title = "Select new audio";
+        //sfd.Title = title;
+        //sfd.Filter = "Audios (*.mp3;*.wav) | *.mp3; *.wav | All files (*.*)|*.*";
+        //sfd.FilterIndex = 1;
+        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //{
+        //    stream = sfd.OpenFile();
+        //    if (stream != null)
+        //    {
+        //        FileStream file = stream as FileStream;
+        //        if (file != null)
+        //        {
+        //            StartCoroutine(LoadAudioFile(file.Name));
 
-                }
-                stream.Close();
-            }
+        //        }
+        //        stream.Close();
+        //    }
+        //}
+        string openPath = FileBrowserStatic.OpenFile("Select new audio", "Audio (*.wav,*.mp3)|*.wav;*.mp3|All files (*.*)|*.*", 0);
+        if (openPath != string.Empty)
+        {
+            StartCoroutine(LoadAudioFile(openPath));
         }
     }
 
@@ -60,7 +65,7 @@ public class LoadNewAudio : MonoBehaviour
         AudioType selectedType = AudioType.MPEG;
         int pointPos = path.LastIndexOf(".");
         print(path.Substring(pointPos));
-        if(path.Substring(pointPos) == ".wav")
+        if(path.Substring(pointPos).ToLower() == ".wav")
         {
             print("Is wav");
             selectedType = AudioType.WAV;

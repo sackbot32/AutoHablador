@@ -93,26 +93,32 @@ public class NewProjectCreator : MonoBehaviour
 
     public void SelectAudioPath()
     {
-        Stream stream;
-        System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
-        string title = "Select new audio";
-        sfd.Title = title;
-        sfd.Filter = "Audios (*.mp3;*.wav) | *.mp3; *.wav | All files (*.*)|*.*";
-        sfd.FilterIndex = 1;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            stream = sfd.OpenFile();
-            if (stream != null)
-            {
-                FileStream file = stream as FileStream;
-                if (file != null)
-                {
-                    audioPath = file.Name;
-                    audioFileName.text = "Chosen audio:\n" + audioPath.Substring(audioPath.LastIndexOf("\\") +1);
+        //Stream stream;
+        //System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
+        //string title = "Select new audio";
+        //sfd.Title = title;
+        //sfd.Filter = "Audios (*.mp3;*.wav) | *.mp3; *.wav | All files (*.*)|*.*";
+        //sfd.FilterIndex = 1;
+        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //{
+        //    stream = sfd.OpenFile();
+        //    if (stream != null)
+        //    {
+        //        FileStream file = stream as FileStream;
+        //        if (file != null)
+        //        {
+        //            audioPath = file.Name;
+        //            audioFileName.text = "Chosen audio:\n" + audioPath.Substring(audioPath.LastIndexOf("\\") +1);
 
-                }
-                stream.Close();
-            }
+        //        }
+        //        stream.Close();
+        //    }
+        //}
+        string openPath = FileBrowserStatic.OpenFile("Select new audio", "Audio (*.wav,*.mp3)|*.wav;*.mp3|All files (*.*)|*.*", 0);
+        if(openPath != string.Empty)
+        {
+            audioPath = openPath;
+            audioFileName.text = "Chosen audio:\n" + audioPath.Substring(audioPath.LastIndexOf("\\") + 1);
         }
     }
 

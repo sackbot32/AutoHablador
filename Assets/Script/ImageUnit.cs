@@ -47,36 +47,49 @@ public class ImageUnit : MonoBehaviour
     public void LoadExternalImage()
     {
         print("Loading for " + gameObject.name);
-        Stream stream;
-        System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
-        string title = "Select image for: " + typeOf;
-        sfd.Title = title;
-        sfd.Filter = "Images with transparency (*.png) | *.png | All files (*.*)|*.*";
-        sfd.FilterIndex = 1;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //Stream stream;
+        //System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
+        //string title = "Select image for: " + typeOf;
+        //sfd.Title = title;
+        //sfd.Filter = "Images with transparency (*.png) | *.png | All files (*.*)|*.*";
+        //sfd.FilterIndex = 1;
+        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //{
+        //    stream = sfd.OpenFile();
+        //    if (stream != null)
+        //    {
+        //        FileStream file = stream as FileStream;
+        //        if (file != null)
+        //        {
+        //            print(file.Name);
+        //            Texture2D imageChosen = LoadImage(file.Name);
+        //            if (imageChosen != null)
+        //            {
+        //                Sprite newSprite = Sprite.Create(imageChosen, new Rect(0, 0, imageChosen.width, imageChosen.height), new Vector2(0, 0));
+
+        //                //image.sprite = newSprite;
+        //                LoadForEdit(newSprite);
+        //            }
+        //            else
+        //            {
+        //                Loader.Instance.CreateNotif("No image found in file", NotifType.Error, "OK");
+        //            }
+
+        //        }
+        //        stream.Close();
+        //    }
+        //}
+        string openPath = FileBrowserStatic.OpenFile("Select image for: " + typeOf,"Images with transparency (*.png)|*.png|All files (*.*)|*.*", 0);
+        if (openPath != string.Empty)
         {
-            stream = sfd.OpenFile();
-            if (stream != null)
+            print(openPath);
+            Texture2D imageChosen = LoadImage(openPath);
+            if (imageChosen != null)
             {
-                FileStream file = stream as FileStream;
-                if (file != null)
-                {
-                    print(file.Name);
-                    Texture2D imageChosen = LoadImage(file.Name);
-                    if (imageChosen != null)
-                    {
-                        Sprite newSprite = Sprite.Create(imageChosen, new Rect(0, 0, imageChosen.width, imageChosen.height), new Vector2(0, 0));
+                Sprite newSprite = Sprite.Create(imageChosen, new Rect(0, 0, imageChosen.width, imageChosen.height), new Vector2(0, 0));
 
-                        //image.sprite = newSprite;
-                        LoadForEdit(newSprite);
-                    }
-                    else
-                    {
-                        Loader.Instance.CreateNotif("No image found in file", NotifType.Error, "OK");
-                    }
-
-                }
-                stream.Close();
+                //image.sprite = newSprite;
+                LoadForEdit(newSprite);
             }
         }
     }

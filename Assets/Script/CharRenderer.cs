@@ -70,28 +70,32 @@ public class CharRenderer : MonoBehaviour
     }
     public void SelectFileToSaveRender()
     {
-        Stream stream;
+        //Stream stream;
         videoFileExtension = greenScreen ? "mp4" : "mov";
-        System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+        //System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
         string title = "Select where to put your rendered gif";
-        sfd.Title = title;
-        sfd.Filter =  $"{videoFileExtension} (*.{videoFileExtension}) | *.{videoFileExtension}";
-        sfd.FilterIndex = 1;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //sfd.Title = title;
+        //sfd.Filter =  $"{videoFileExtension} (*.{videoFileExtension}) | *.{videoFileExtension}";
+        //sfd.FilterIndex = 1;
+        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //{
+        //    stream = sfd.OpenFile();
+        //    if (stream != null)
+        //    {
+        //        FileStream file = stream as FileStream;
+        //        if (file != null)
+        //        {
+        //            RenderByFiles(file.Name);
+
+        //        }
+        //        stream.Close();
+        //    }
+        //}
+        string savePath = FileBrowserStatic.SaveFile(title, $"{videoFileExtension}(*.{videoFileExtension})|*.{videoFileExtension}", "default", videoFileExtension);
+        if (savePath != string.Empty)
         {
-            stream = sfd.OpenFile();
-            if (stream != null)
-            {
-                FileStream file = stream as FileStream;
-                if (file != null)
-                {
-                    RenderByFiles(file.Name);
-
-                }
-                stream.Close();
-            }
+            RenderByFiles(savePath);
         }
-
     }
     public void RenderByFiles(string path)
     {
