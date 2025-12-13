@@ -124,6 +124,14 @@ public class Talker : MonoBehaviour
         return newValue;
     }
 
+    public void UpdateAudioSliders(float min,float max)
+    {
+        showLoudnessSlider.minValue = min;
+        showLoudnessSlider.maxValue = max;
+        volumeThresholdSlider.minValue = min;
+        volumeThresholdSlider.maxValue = max;
+    }
+
     IEnumerator GetInfo()
     {
         while (true)

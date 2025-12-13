@@ -1,9 +1,10 @@
-using UnityEngine;
-using System.IO;
-using UnityEngine.Networking;
 using System.Collections;
-using System.Windows;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class LoadNewAudio : MonoBehaviour
 {
@@ -56,6 +57,41 @@ public class LoadNewAudio : MonoBehaviour
 
     public void SubtitubeAudio(AudioClip clip)
     {
+
+        float[] AudioSamples = new float[1024];
+        float min = float.PositiveInfinity;
+        float max = float.NegativeInfinity;
+        print("ne valu" + clip.samples);
+        for (int i = 0; i < clip.samples; i++)
+        {
+            float newValue = 0;
+            clip.GetData(AudioSamples, i);
+            foreach (float sample in AudioSamples)
+            {
+                newValue += Mathf.Abs(sample);
+            }
+            newValue /= 1024;
+            newValue *= InfoSingleton.Instance.talker.valueMultiplier;
+
+            
+            if (newValue < 0.001f * InfoSingleton.Instance.talker.valueMultiplier)
+            {
+                newValue = 0f;
+            }
+
+            if (newValue < min)
+            {
+                min = newValue;
+            }
+            if(newValue > max)
+            {
+                max = newValue;
+            }
+        }
+
+        InfoSingleton.Instance.maxVol = max;
+        InfoSingleton.Instance.minVol = min;
+        InfoSingleton.Instance.talker.UpdateAudioSliders(InfoSingleton.Instance.minVol, InfoSingleton.Instance.maxVol);
         InfoSingleton.Instance.talker.source.clip = clip;
         
         InfoSingleton.Instance.audioPlayerController.UpdateDurationSlider();
@@ -73,11 +109,14 @@ public class LoadNewAudio : MonoBehaviour
         }
         UnityWebRequest audioData = UnityWebRequestMultimedia.GetAudioClip(path, selectedType);
         yield return audioData.SendWebRequest();
+        print(audioData.result);
         if (audioData.result == UnityWebRequest.Result.Success)
         {
+            print("audio for loading");
             AudioClip audioFile = DownloadHandlerAudioClip.GetContent(audioData);
             if (audioFile != null)
             {
+                
                 InfoSingleton.Instance.audioPath = path;
                 SubtitubeAudio(audioFile);
             }

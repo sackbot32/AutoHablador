@@ -101,6 +101,7 @@ public class SaveFile : MonoBehaviour
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
             InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
             InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
+            print("loading audio");
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
             //Clear expresion for new ones
             InfoSingleton.Instance.talker.characterExpresions = new List<CharacterPortraits>();

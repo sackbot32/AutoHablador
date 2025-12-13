@@ -21,7 +21,8 @@ public class InfoSingleton : MonoBehaviour
     public AudioPlayerController audioPlayerController;
     public string audioPath;
     public bool deletingNode = false;
-
+    public float minVol = 0;
+    public float maxVol = 0;
     private void Awake()
     {
         Instance = this;
