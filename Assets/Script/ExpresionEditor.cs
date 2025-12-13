@@ -58,7 +58,8 @@ public class ExpresionEditor : MonoBehaviour
             
         } else
         {
-            Loader.Instance.CreateNotif("Please add images and a name", NotifType.Error, "OK");
+            //
+            Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifLackImgNName"), NotifType.Error, "OK");
         }
     }
 

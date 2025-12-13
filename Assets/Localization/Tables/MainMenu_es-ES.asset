@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MainMenu_es-ES
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: es-ES
+  m_SharedData: {fileID: 11400000, guid: ab160ee6582e3934280a0d2828b96df4, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 451138310144
+    m_Localized: 'EmguCV de Emgu Corporation
+
+      FFMpegCore de Malte Rosenberg,
+      Vlad Jerca y Max Bagryatsev
+
+      Magick.Net de Dirk Lemstra
+
+      SavWav
+      de Calvin Rien
+
+      AnotherFileBrowser de SrejonKhan
+
+
+
+
+
+      Aplicacion
+      de Paulus Soler'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287848061227008
+    m_Localized: Salir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 288025094410240
+    m_Localized: Creditos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 289384501891072
+    m_Localized: Ponle nombre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 289744532557824
+    m_Localized: Nuevo projecto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290161542844416
+    m_Localized: Elige un audio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 290868975128576
+    m_Localized: Crear nuevo proyecto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292043363471360
+    m_Localized: 'Audio elegido:
+
+      {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 293144263413760
+    m_Localized: 'Expresion de referencia:
+
+      {0}'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

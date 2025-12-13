@@ -101,12 +101,13 @@ public class RenderMenu : MonoBehaviour
             
             if (pathWithoutEnd.Length <= 0)
             {
-                Loader.Instance.CreateNotif("No path", NotifType.Error, "OK");
+                //Loader.Instance.GetLocalizedMessage("errorNotifNoPath")
+                Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifNoPath"), NotifType.Error, "OK");
 
                 
             } else if(fileName.Length <= 0)
             {
-                Loader.Instance.CreateNotif("No file name", NotifType.Error, "OK");
+                Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifFileName"), NotifType.Error, "OK");
             } else
             {
                 Loader.Instance.CreateNotif("This error should not happen", NotifType.Error, "OK");

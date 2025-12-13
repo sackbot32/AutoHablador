@@ -135,7 +135,9 @@ public class SaveFile : MonoBehaviour
 
         } else
         {
-            Loader.Instance.CreateNotif("Save at " + Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json" + " not found" , NotifType.Error, "OK");
+            //Loader.Instance.GetLocalizedMessage("errorNotifSaveFileNotFound")
+            
+            Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifSaveFileNotFound", new object[] { Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json" + " not found" }), NotifType.Error, "OK");
         }
     }
 
@@ -143,8 +145,9 @@ public class SaveFile : MonoBehaviour
     {
         if(audioPath.Length <= 0)
         {
-            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "\\Default.wav" );
-            InfoSingleton.Instance.audioPath = Loader.Instance.filePath + "\\Default.wav";
+            
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav" );
+            InfoSingleton.Instance.audioPath = Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav";
         } else
         {
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(audioPath);
@@ -203,7 +206,8 @@ public class SaveFile : MonoBehaviour
 
     public void CallQuitToMenu()
     {
-        Loader.Instance.CreateAssurance("Are you sure you want to quit without saving?",QuitToMenu);
+        //Loader.Instance.GetLocalizedMessage("assurQuitNoSave")
+        Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("assurQuitNoSave"), QuitToMenu);
     }
     public void QuitToMenu()
     {

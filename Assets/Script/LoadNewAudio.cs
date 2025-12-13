@@ -43,7 +43,8 @@ public class LoadNewAudio : MonoBehaviour
 
     public void CallLoadAudio()
     {
-        Loader.Instance.CreateAssurance("Warning! If you change audio your expression nodes will mantain their time, this could lead to problems, are you sure you want do it?", LoadAudio);
+        //Loader.Instance.GetLocalizedMessage("assurAudioChange")
+        Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("assurAudioChange"), LoadAudio);
     }
 
     public void LoadAudioFromPath(string path) 

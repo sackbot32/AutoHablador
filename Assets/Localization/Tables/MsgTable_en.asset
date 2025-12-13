@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MsgTable_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 965d06f2fb33b954cabf8a8c4fdb4a08, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 576975818752
+    m_Localized: Can't overide reference project, select another or change name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5132912709632
+    m_Localized: You need a name to create a project
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6621643165696
+    m_Localized: Are you sure you want to override {0}? It will delete all its data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89350648909824
+    m_Localized: I understand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 89894478172160
+    m_Localized: No images present to render
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90215485034496
+    m_Localized: 'Video rendered at: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 90979913715712
+    m_Localized: Please add images and a name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91267512946688
+    m_Localized: Text missing, please, write text in textbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91571688067072
+    m_Localized: There is no selected path
+    m_Metadata:
+      m_Items: []
+  - m_Id: 91836596113408
+    m_Localized: No file name set
+    m_Metadata:
+      m_Items: []
+  - m_Id: 92362125627392
+    m_Localized: Save at {0} not found
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93072347123712
+    m_Localized: Are you sure you want to delete this expression?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 93595653656576
+    m_Localized: Warning! If you change audio your expression nodes will mantain
+      their time, this could lead to problems, are you sure you want do it?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 97584449343488
+    m_Localized: Are you sure you want to delete {0} ?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 98340850126848
+    m_Localized: Are you sure you want to quit without saving?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101611694215168
+    m_Localized: Error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101665284837376
+    m_Localized: Warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 101740006363136
+    m_Localized: Success
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142147696218112
+    m_Localized: 'Currently Loading:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 142810580799488
+    m_Localized: Starting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143263989256192
+    m_Localized: 'Rendering image number '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143633520021504
+    m_Localized: Images turned into video
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145346855456768
+    m_Localized: DefaultEng
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

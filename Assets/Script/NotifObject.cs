@@ -41,17 +41,17 @@ public class NotifObject : MonoBehaviour
             case NotifType.Error:
                 whichIcon = 0;
                 notifIcon.color = Color.red;
-                title.text = "Error";
+                title.text = Loader.Instance.GetLocalizedMessage("notifError");
                 break;
             case NotifType.Warning:
                 whichIcon = 1;
                 notifIcon.color = Color.orange;
-                title.text = "Warning";
+                title.text = Loader.Instance.GetLocalizedMessage("notifWarn");
                 break;
             case NotifType.Success:
                 whichIcon = 2;
                 notifIcon.color = Color.green;
-                title.text = "Success";
+                title.text = Loader.Instance.GetLocalizedMessage("notifSucc");
                 break;
         }
         notifIcon.sprite = icons[whichIcon];

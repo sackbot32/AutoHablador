@@ -103,7 +103,8 @@ public class CharRenderer : MonoBehaviour
         targetPath = path;
         renderedTextures.Clear();
         loadingBarParent.SetActive(true);
-        whatIsLoading.text = loadingTextBase + "Starting";
+        loadingTextBase = Loader.Instance.GetLocalizedMessage("loadRenderTextBase") + "\n";
+        whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderStartText");
         progressBar.minValue = 0;
         progressBar.value = 0;
         int maxValue = 0;
@@ -124,7 +125,8 @@ public class CharRenderer : MonoBehaviour
         audioOnRender = usesAudio;
         renderedTextures.Clear();
         loadingBarParent.SetActive(true);
-        whatIsLoading.text = loadingTextBase + "Starting";
+        loadingTextBase = Loader.Instance.GetLocalizedMessage("loadRenderTextBase") + "\n";
+        whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderStartText");
         progressBar.minValue = 0;
         progressBar.value = 0;
         int maxValue = 0;
@@ -151,8 +153,8 @@ public class CharRenderer : MonoBehaviour
         for (int i = 0; i < InfoSingleton.Instance.talker.source.clip.samples; i = i + InfoSingleton.Instance.talker.source.clip.frequency/framesPerSecond)
         {
 
-            print("Rendering image number " + num);
-            whatIsLoading.text = loadingTextBase + "Rendering image number " + num + "/" + total;
+            print("Rendering image number " + num);//loadRenderImageNumText
+            whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageNumText") + num + "/" + total;
             Texture2D starter = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i);
             Texture2D beingSaved;
             if (greenScreen)
@@ -190,7 +192,7 @@ public class CharRenderer : MonoBehaviour
         } else
         {
             //TODO substitute with icon
-            Loader.Instance.CreateNotif("No images present", NotifType.Error, "OK");
+            Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifLackImage"), NotifType.Error, "OK");
             loadingBarParent.SetActive(false);
         }
     }
@@ -228,9 +230,10 @@ public class CharRenderer : MonoBehaviour
             System.IO.File.Delete(onlyVideoPath);
         }
         progressBar.value += 1;
-        whatIsLoading.text = loadingTextBase + "Images turned into video";
+        //Loader.Instance.GetLocalizedMessage("errorNotifLackImage")
+        whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
         loadingBarParent.SetActive(false);
-        Loader.Instance.CreateNotif("Video rendered at: " + savePath, NotifType.Success, "OK");
+        Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("succNotifRenderComplete", new object[] { savePath }), NotifType.Success, "OK");
     }
 
     private Texture2D FromTransparentToColor(Texture2D starter, UnityEngine.Color selectedColor)

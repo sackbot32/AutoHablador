@@ -19,7 +19,8 @@ public class MultiTextInput : MonoBehaviour
             }
         } else
         {
-            Loader.Instance.CreateNotif("Text missing, please, write text in textbox", NotifType.Error);
+            //
+            Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("errorNotifLackTextForSubmit"), NotifType.Error);
         }
     }
 }

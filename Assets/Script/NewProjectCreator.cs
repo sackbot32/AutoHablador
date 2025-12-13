@@ -24,6 +24,10 @@ public class NewProjectCreator : MonoBehaviour
         Loader.Instance.NewProyect(projectName.text, audioPath, expresionJsonPath);
     }
 
+    private void OnEnable()
+    {
+        ClearUpInfo();
+    }
     public void CallCreateProject()
     {
         if (projectName.text.Length > 0)
@@ -31,7 +35,7 @@ public class NewProjectCreator : MonoBehaviour
             if(Loader.Instance.saveFilePath + "\\" + projectName.text + "\\" + "saveOf" + projectName.text + ".json" != expresionJsonPath){
                 if (ProjectSelectorCreator.GetAllProjects().Contains(projectName.text))
                 {
-                    Loader.Instance.CreateAssurance("Do you want to override the project "+ projectName.text + "? It will delete them", () =>
+                    Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("assurOverride",new object[]{ projectName.text }), () =>
                     {
                         if (System.IO.Directory.Exists(Loader.Instance.saveFilePath + "\\" + projectName.text))
                         {
@@ -54,11 +58,11 @@ public class NewProjectCreator : MonoBehaviour
                 }
             } else
             {
-                Loader.Instance.CreateNotif("Can't overide reference project, select another or change name", NotifType.Warning, "I understand");
+                Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("notifOverideWarn"), NotifType.Warning, Loader.Instance.GetLocalizedMessage("under"));
             }
         } else
         {
-            Loader.Instance.CreateNotif("You need a name to create a project", NotifType.Warning, "I understand");
+            Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("notifNameNeedWarn"), NotifType.Warning, Loader.Instance.GetLocalizedMessage("under"));
         }
     }
 
@@ -71,9 +75,10 @@ public class NewProjectCreator : MonoBehaviour
     {
         projectName.text = "";
         audioPath = "";
-        audioFileName.text = "Chosen audio:\n" + "Default.wav";
+
+        audioFileName.text = Loader.Instance.GetLocalizedMessageFromTable("MainMenu", "chosenAudioText", new object[] { "Default.wav" });
         expresionJsonPath = "";
-        projectNameText.text = "Expresion Reference:\n" + "Default";
+        projectNameText.text = Loader.Instance.GetLocalizedMessageFromTable("MainMenu", "chosenProjectReferenceText", new object[] { "Default" });
     }
 
     public void CreateProjectList()
@@ -118,13 +123,16 @@ public class NewProjectCreator : MonoBehaviour
         if(openPath != string.Empty)
         {
             audioPath = openPath;
-            audioFileName.text = "Chosen audio:\n" + audioPath.Substring(audioPath.LastIndexOf("\\") + 1);
+            
+            audioFileName.text = Loader.Instance.GetLocalizedMessageFromTable("MainMenu", "chosenAudioText", new object[] { (audioPath.Substring(audioPath.LastIndexOf("\\") + 1) )});
         }
     }
 
     public void SelectJson(string jsonPath,string projectName)
     {
         expresionJsonPath = jsonPath;
-        projectNameText.text = "Expresion Reference:\n" + projectName;
+        //Loader.Instance.GetLocalizedMessage("chosenAudioText")
+        
+        projectNameText.text = Loader.Instance.GetLocalizedMessageFromTable("MainMenu", "chosenProjectReferenceText", new object[] { projectName });
     }
 }

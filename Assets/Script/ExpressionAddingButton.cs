@@ -75,7 +75,7 @@ public class ExpressionAddingButton : MonoBehaviour
 
     public void CallDeleteExpresion()
     {
-        Loader.Instance.CreateAssurance("Are you sure you want to delete this expression? ", DeleteExpression);
+        Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("assurDeleteExpresion"), DeleteExpression);
     }
 
     public void DeleteExpression()

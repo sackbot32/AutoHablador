@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: MainEditor Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: MainEditor
+  m_TableCollectionNameGuidString: 74ec30b084e41414a8d7eb540c417651
+  m_Entries:
+  - m_Id: 20844662784
+    m_Key: sensitityLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 448365875200
+    m_Key: openMenuButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 563935727616
+    m_Key: addExpresionButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1144746168320
+    m_Key: openRenderMenuButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1412548284416
+    m_Key: saveButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1571646623744
+    m_Key: saveNQuitButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1960550879232
+    m_Key: loadNewAudioButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2144517246976
+    m_Key: quitButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2783548821504
+    m_Key: expresionNameInput
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3204765995008
+    m_Key: cancelButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3447863660544
+    m_Key: loadImageButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3651597783040
+    m_Key: expresionButtonColorButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3839355801600
+    m_Key: talkLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3955273781248
+    m_Key: shutLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5153397690368
+    m_Key: rendererFileNameLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5332565774336
+    m_Key: fpsSetPlaceholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5540037021696
+    m_Key: fpsSetLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5777749200896
+    m_Key: setPathButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6165281918976
+    m_Key: transparentLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6883355152384
+    m_Key: imageInfoText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7432880279552
+    m_Key: audioInfoText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13341991915520
+    m_Key: cancelRenderButton
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7617353089863385235
+  references:
+    version: 2
+    RefIds:
+    - rid: 7617353089863385235
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1765652125405

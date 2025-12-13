@@ -48,7 +48,9 @@ public class ProjectSelectorCreator : MonoBehaviour
 
     public void CallDeleteProject(string projectName)
     {
-        Loader.Instance.CreateAssurance("Are you sure you want to delete " + projectName, DeleteProject(projectName));
+        //Loader.Instance.GetLocalizedMessage("assurDeleteProject")
+        
+        Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("assurDeleteProject", new object[] { projectName }), DeleteProject(projectName));
     }
 
     public Action DeleteProject(string projectName)
