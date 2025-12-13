@@ -45,8 +45,7 @@ public class Loader : MonoBehaviour
             Loader.Instance = this;
             DontDestroyOnLoad(this);
             LoadingAnim(false);
-            //TODO hacer que se creen los archivos de audio en todos los idiomas con sus respectivos nombres
-            //Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav";
+            
         }
         else
         {
