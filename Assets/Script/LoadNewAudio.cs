@@ -1,13 +1,24 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using FFMpegCore.Pipes;
+using NUnit.Framework;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class LoadNewAudio : MonoBehaviour
 {
+    
+
     public static LoadNewAudio instance;
     private void Awake()
     {
@@ -15,29 +26,10 @@ public class LoadNewAudio : MonoBehaviour
     }
     public void LoadAudio()
     {
-        //Stream stream;
-        //System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
-        //string title = "Select new audio";
-        //sfd.Title = title;
-        //sfd.Filter = "Audios (*.mp3;*.wav) | *.mp3; *.wav | All files (*.*)|*.*";
-        //sfd.FilterIndex = 1;
-        //if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        //{
-        //    stream = sfd.OpenFile();
-        //    if (stream != null)
-        //    {
-        //        FileStream file = stream as FileStream;
-        //        if (file != null)
-        //        {
-        //            StartCoroutine(LoadAudioFile(file.Name));
-
-        //        }
-        //        stream.Close();
-        //    }
-        //}
         string openPath = FileBrowserStatic.OpenFile("Select new audio", "Audio (*.wav,*.mp3)|*.wav;*.mp3|All files (*.*)|*.*", 0);
         if (openPath != string.Empty)
         {
+            //int pos = Mathf.Clamp(Loader.Instance.tasksForLoading.Count - 1, 0, Loader.Instance.tasksForLoading.Count - 1);
             StartCoroutine(LoadAudioFile(openPath));
         }
     }
@@ -50,6 +42,7 @@ public class LoadNewAudio : MonoBehaviour
 
     public void LoadAudioFromPath(string path) 
     {
+        int pos = Mathf.Clamp(Loader.Instance.tasksForLoading.Count - 1, 0, Loader.Instance.tasksForLoading.Count - 1);
         StartCoroutine(LoadAudioFile(path));
     }
 
@@ -58,13 +51,24 @@ public class LoadNewAudio : MonoBehaviour
     public void SubtitubeAudio(AudioClip clip)
     {
 
+        //StartCoroutine(getAudioVolumeRange(clip));
+        InfoSingleton.Instance.talker.source.clip = clip;
+        
+        InfoSingleton.Instance.audioPlayerController.UpdateDurationSlider();
+        InfoSingleton.Instance.talker.UpdateAudioSliders(0, 1);
+    }
+
+    IEnumerator getAudioVolumeRange(AudioClip clip)
+    {
         float[] AudioSamples = new float[1024];
         float min = float.PositiveInfinity;
         float max = float.NegativeInfinity;
-        print("ne valu" + clip.samples);
+        float newValue = 0;
+        List<float> valueList = new List<float>();
         for (int i = 0; i < clip.samples; i++)
         {
-            float newValue = 0;
+            print("which sample are you on: " + i + " out of " + clip.samples);
+            newValue = 0;
             clip.GetData(AudioSamples, i);
             foreach (float sample in AudioSamples)
             {
@@ -73,28 +77,35 @@ public class LoadNewAudio : MonoBehaviour
             newValue /= 1024;
             newValue *= InfoSingleton.Instance.talker.valueMultiplier;
 
-            
+
             if (newValue < 0.001f * InfoSingleton.Instance.talker.valueMultiplier)
             {
                 newValue = 0f;
             }
+            valueList.Add(newValue);
+            yield return null;
+        }
+        int n = 0;
+        foreach (float value in valueList)
+        {
+            print("which value are you on: " + n + " out of " + valueList.Count);
+            n++;
 
-            if (newValue < min)
+            if (value < min)
             {
-                min = newValue;
+                min = value;
             }
-            if(newValue > max)
+            if (value > max)
             {
-                max = newValue;
+                max = value;
             }
+            yield return null;
         }
 
         InfoSingleton.Instance.maxVol = max;
         InfoSingleton.Instance.minVol = min;
         InfoSingleton.Instance.talker.UpdateAudioSliders(InfoSingleton.Instance.minVol, InfoSingleton.Instance.maxVol);
-        InfoSingleton.Instance.talker.source.clip = clip;
-        
-        InfoSingleton.Instance.audioPlayerController.UpdateDurationSlider();
+        Loader.Instance.tasksForLoading.Remove("loadAudio");
     }
 
     IEnumerator LoadAudioFile(string path)

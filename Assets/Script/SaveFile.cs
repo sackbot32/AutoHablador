@@ -96,12 +96,13 @@ public class SaveFile : MonoBehaviour
     {
         if(System.IO.File.Exists(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json"))
         {
+            
             //filePath + "\\" + name + "\\" + "saveOf" + name + ".json"
             string json = new StreamReader(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
             InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
             InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
-            print("loading audio");
+            //Loader.Instance.tasksForLoading.Add("loadAudio");
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
             //Clear expresion for new ones
             InfoSingleton.Instance.talker.characterExpresions = new List<CharacterPortraits>();
@@ -132,7 +133,8 @@ public class SaveFile : MonoBehaviour
                 StartCoroutine(PutSliders(load.expTimes));
             }
             projectName = name;
-            
+            Loader.Instance.tasksForLoading.Remove("loadJson");
+
 
         } else
         {
@@ -144,7 +146,8 @@ public class SaveFile : MonoBehaviour
 
     public void NewProject(string name, string audioPath = "", string expresionJsonPath = "")
     {
-        if(audioPath.Length <= 0)
+        //Loader.Instance.tasksForLoading.Add("loadAudio");
+        if (audioPath.Length <= 0)
         {
             
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav" );
@@ -178,6 +181,7 @@ public class SaveFile : MonoBehaviour
         }
         buttonCreator.CreateButtons();
         projectName = name;
+        Loader.Instance.tasksForLoading.Remove("newProject");
     }
 
     IEnumerator PutSliders(List<ExpresionTime> loaded)

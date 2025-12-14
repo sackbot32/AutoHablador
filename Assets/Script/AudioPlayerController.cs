@@ -39,18 +39,24 @@ public class AudioPlayerController : MonoBehaviour
         {
             currentTime = durationShow.value;
         }
-        if (currentTime >= currentAudioDuration && !sourceToControl.isPlaying)
+        if (currentTime >= (currentAudioDuration - 0.05f) && sourceToControl.isPlaying)
         {
-            //print("End reached");
-            sourceToControl.Stop();
+            print("End reached");
             playIcon.sprite = icons[2];
+            sourceToControl.Stop();
         }
+        
 
         if(!sourceToControl.isPlaying && currentTime < currentAudioDuration)
         {
             playIcon.sprite = icons[0];
         }
-        if(InfoSingleton.Instance != null)
+
+        if (currentTime >= (currentAudioDuration - 0.05f) && !sourceToControl.isPlaying)
+        {
+            playIcon.sprite = icons[2];
+        }
+        if (InfoSingleton.Instance != null)
         {
             InfoSingleton.Instance.length = currentAudioDuration;
             InfoSingleton.Instance.currentTime = currentTime;

@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using UnityEditor.Localization;
 using UnityEngine.Localization.Settings;
+using System.Collections.Generic;
 
 public class Loader : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class Loader : MonoBehaviour
     public Color defaultBack = Color.gray;
     public BackgroundColor bgColorControl;
     public StringTableCollection msgStringTable;
+    public List<string> tasksForLoading;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -36,6 +38,7 @@ public class Loader : MonoBehaviour
         }
         if(Loader.Instance == null)
         {
+            tasksForLoading = new List<string>();
             filePath = Application.persistentDataPath;
             saveFilePath = filePath + "\\Saves";
             if (!System.IO.File.Exists(saveFilePath))
@@ -70,6 +73,7 @@ public class Loader : MonoBehaviour
 
     IEnumerator OpenFileCoroutine(string whichFile)
     {
+        Loader.Instance.tasksForLoading.Add("loadJson");
         LoadingAnim(true, loadImageAnimDuration);
         yield return new WaitForSeconds(loadImageAnimDuration);
         AsyncOperation sceneLoad = SceneManager.LoadSceneAsync(1);
@@ -86,14 +90,14 @@ public class Loader : MonoBehaviour
         }
         print("reach after instance");
         print(InfoSingleton.Instance.saveFile.name);
+        StartCoroutine(FinishLoading());
         InfoSingleton.Instance.saveFile.LoadJson(whichFile);
-        isLoading=false;
-        LoadingAnim(false);
 
     }
 
     IEnumerator NewFileCoroutine(string name,string audioPath,string jsonPath)
     {
+        Loader.Instance.tasksForLoading.Add("newProject");
         LoadingAnim(true, loadImageAnimDuration);
         yield return new WaitForSeconds(loadImageAnimDuration);
         AsyncOperation sceneLoad = SceneManager.LoadSceneAsync(1);
@@ -108,7 +112,22 @@ public class Loader : MonoBehaviour
             print("LOADING");
             yield return null;
         }
+        StartCoroutine(FinishLoading());
         InfoSingleton.Instance.saveFile.NewProject(name,audioPath,jsonPath);
+    }
+
+    private IEnumerator FinishLoading()
+    {
+        print("tasks for loading " + tasksForLoading.Count);
+        bool canFinishLoading = false;
+        while (!canFinishLoading)
+        {
+            if (tasksForLoading.Count <= 0)
+            {
+                canFinishLoading = true;
+            }
+            yield return null;
+        }
         isLoading = false;
         LoadingAnim(false);
     }
