@@ -33,7 +33,7 @@ public class Talker : MonoBehaviour
     public float valueMultiplier = 1;
     public float currentValue;
     public float characterSize = 1f;
-
+    public SetAudioRangeLimits rangeLimits;
 
     private Color sliderColor;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -130,6 +130,7 @@ public class Talker : MonoBehaviour
         showLoudnessSlider.maxValue = max;
         volumeThresholdSlider.minValue = min;
         volumeThresholdSlider.maxValue = max;
+        rangeLimits.UpdateFields(min,max);
     }
 
     IEnumerator GetInfo()

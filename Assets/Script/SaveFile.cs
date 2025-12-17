@@ -12,6 +12,8 @@ public class SaveClass
 {
     public string name;
     public float volumeSensitivity;
+    public float[] volumeRange;
+    //0 min 1 max
     public List<CharacterPortraits> characterPortraits;
     public List<ExpresionTime> expTimes;
     public string audioPath;
@@ -41,6 +43,9 @@ public class SaveFile : MonoBehaviour
         Directory.CreateDirectory(Loader.Instance.saveFilePath + "\\" + save.name);
         save.characterPortraits = InfoSingleton.Instance.talker.characterExpresions;
         save.volumeSensitivity = InfoSingleton.Instance.talker.volumeThreshold;
+        save.volumeRange = new float[2];
+        save.volumeRange[0] = InfoSingleton.Instance.talker.showLoudnessSlider.minValue;
+        save.volumeRange[1] = InfoSingleton.Instance.talker.showLoudnessSlider.maxValue;
         foreach (CharacterPortraits invPor in save.characterPortraits)
         {
             if(invPor != null)
@@ -101,6 +106,7 @@ public class SaveFile : MonoBehaviour
             string json = new StreamReader(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
             InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
+            InfoSingleton.Instance.talker.UpdateAudioSliders(load.volumeRange[0],load.volumeRange[1]);
             InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
             //Loader.Instance.tasksForLoading.Add("loadAudio");
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
