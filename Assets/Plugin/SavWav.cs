@@ -107,7 +107,7 @@ public static class SavWav {
 
 	static void ConvertAndWrite(FileStream fileStream, AudioClip clip) {
 
-		var samples = new float[clip.samples];
+		var samples = new float[clip.samples*clip.channels];
 
 		clip.GetData(samples, 0);
 

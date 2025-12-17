@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-Spanish (Spain) (es-ES)
   m_GUID: 59c484276224bf440b6f6f7533c7d3e0
   m_SerializeEntries:
-  - m_GUID: cd1cfd69a238a6345af31531df492419
-    m_Address: EsDefaultTest
+  - m_GUID: 903ce3c63df3cf14896f9df64b7cd2a8
+    m_Address: Autohablador audio esp defecto
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-es-ES
