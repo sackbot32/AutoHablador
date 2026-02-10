@@ -174,9 +174,9 @@ public class CharRenderer : MonoBehaviour
             }
             renderedTextures.Add(beingSaved);
             byte[] tempImageData = beingSaved.EncodeToPNG();
-            Mat nMat = new Mat();
-            CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
-            textureMats.Add(nMat);
+            //Mat nMat = new Mat();
+            //CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
+            //textureMats.Add(nMat);
             string numberStringed = num.ToString("000");
             System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
             imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");

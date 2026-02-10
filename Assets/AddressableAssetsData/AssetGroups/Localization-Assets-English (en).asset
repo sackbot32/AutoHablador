@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-English (en)
   m_GUID: a85270b6267e3f843b7a2bc02a48440e
   m_SerializeEntries:
-  - m_GUID: c87f9c95f2c04e5449870fac5b1f49d7
-    m_Address: EngDefaultTest
+  - m_GUID: 0b23974d5c981b74f9576267ddf3e90d
+    m_Address: Autohablador audio eng defecto
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en

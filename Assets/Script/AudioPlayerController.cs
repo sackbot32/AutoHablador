@@ -6,7 +6,7 @@ public class AudioPlayerController : MonoBehaviour
 {
     public AudioSource sourceToControl;
     public Slider durationShow;
-
+    public Text timeText;
     public Image playIcon;
 
     public List<Sprite> icons;
@@ -34,6 +34,7 @@ public class AudioPlayerController : MonoBehaviour
             currentTime = sourceToControl.time;
             currentAudioDuration = sourceToControl.clip.length - 0.05f;
             durationShow.value = currentTime;
+            SetTime();
         }
         if (!sourceToControl.isPlaying)
         {
@@ -65,6 +66,40 @@ public class AudioPlayerController : MonoBehaviour
         {
             PlayStop();
         }
+    }
+
+    public void SetTime()
+    {
+
+        int fullLenghtHour = 0;
+        int fullLenghtMinute = 0;
+        int fullLenghtSecond = 0;
+        fullLenghtHour = Mathf.RoundToInt (InfoSingleton.Instance.length / 3600f);
+        fullLenghtMinute = ((int)InfoSingleton.Instance.length - fullLenghtHour)/60;
+        fullLenghtSecond = ((int)InfoSingleton.Instance.length - fullLenghtHour)%60;
+
+
+        int currentHour = 0;
+        int currentMinute = 0;
+        int currentSecond = 0;
+        currentHour = Mathf.RoundToInt(InfoSingleton.Instance.currentTime / 3600f);
+        currentMinute = ((int)InfoSingleton.Instance.currentTime - currentHour) / 60;
+        currentSecond = ((int)InfoSingleton.Instance.currentTime - currentHour) % 60;
+
+
+        string fullLenghtTimeText = "";
+        string currentTimeText = "";
+        if(fullLenghtHour > 0)
+        {
+            fullLenghtTimeText = fullLenghtHour.ToString("00") + ":" + fullLenghtMinute.ToString("00") + ":" + fullLenghtSecond.ToString("00");
+            currentTimeText = currentHour.ToString("00") + ":" + currentMinute.ToString("00") + ":" + currentSecond.ToString("00");
+        } else
+        {
+            fullLenghtTimeText = fullLenghtMinute.ToString("00") + ":" + fullLenghtSecond.ToString("00");
+            currentTimeText = currentMinute.ToString("00") + ":" + currentSecond.ToString("00");
+        }
+
+        timeText.text = currentTimeText + "/" + fullLenghtTimeText;
     }
 
     public void PlayStop()
@@ -105,5 +140,6 @@ public class AudioPlayerController : MonoBehaviour
                 item.expresionSlider.maxValue = currentAudioDuration;
             }
         }
+        SetTime();
     }
 }
