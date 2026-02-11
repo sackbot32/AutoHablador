@@ -6,9 +6,8 @@ using UnityEngine.Localization;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
-using UnityEditor.Localization;
-using UnityEngine.Localization.Settings;
 using System.Collections.Generic;
+using UnityEngine.Localization.Tables;
 
 public class Loader : MonoBehaviour
 {
@@ -24,7 +23,7 @@ public class Loader : MonoBehaviour
     public float loadImageAnimDuration = 0.05f;
     public Color defaultBack = Color.gray;
     public BackgroundColor bgColorControl;
-    public StringTableCollection msgStringTable;
+    public TableReference msgStringTable;
     public List<string> tasksForLoading;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

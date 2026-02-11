@@ -275,3 +275,8 @@ MonoBehaviour:
   saveFilePath: 
   loaderImage: {fileID: 4167836698728391220}
   loadImageAnimDuration: 0.15
+  defaultBack: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  bgColorControl: {fileID: 0}
+  msgStringTable:
+    m_TableCollectionName: MsgTable
+  tasksForLoading: []
