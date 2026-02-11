@@ -37,7 +37,7 @@ public class ExpressionAddingButton : MonoBehaviour
         GameObject newPoint = Instantiate(expresionPoint,Vector2.zero,Quaternion.identity);
         newPoint.transform.SetParent(InfoSingleton.Instance.slidersContainer);
         newPoint.transform.localScale = Vector3.one;
-        newPoint.GetComponent<RectTransform>().position = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().position + new Vector3(0,204f,0);
+        newPoint.GetComponent<RectTransform>().position = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().position + new Vector3(0, InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().position.y * 8, 0);
         newPoint.GetComponent<RectTransform>().sizeDelta = InfoSingleton.Instance.playerSlider.GetComponent<RectTransform>().sizeDelta - new Vector2(0,0);
         newPoint.GetComponent<ExpresionTimeSlider>().UpdateExpresion(InfoSingleton.Instance.changer.timeExpresionList.Count -1, buttonColor, InfoSingleton.Instance.talker.characterExpresions[whichExpresion].expresionName);
         sliders.Add(newPoint.GetComponent<ExpresionTimeSlider>());
