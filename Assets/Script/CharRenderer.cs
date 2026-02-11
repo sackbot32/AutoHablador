@@ -155,7 +155,13 @@ public class CharRenderer : MonoBehaviour
         {
 
             print("Rendering image number " + num);//loadRenderImageNumText
-            whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageNumText") + num + "/" + total;
+            if(num < total)
+            {
+                whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageNumText") + num + "/" + total;
+            } else
+            {
+                whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
+            }
             Texture2D starter = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i);
             Texture2D beingSaved;
             if (greenScreen)
@@ -187,7 +193,7 @@ public class CharRenderer : MonoBehaviour
         }
         if(imagePathList.Count > 0)
         {
-            whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
+            
             progressBar.value += 1;
             string whichCodec = greenScreen ? "libx264" : "prores_ks";
             TurnImagesToFFMpeg(path,imagePathList, whichCodec);
