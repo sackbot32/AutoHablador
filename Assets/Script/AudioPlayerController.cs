@@ -6,9 +6,10 @@ public class AudioPlayerController : MonoBehaviour
 {
     public AudioSource sourceToControl;
     public Slider durationShow;
+    public bool canUseSpace;
     public Text timeText;
     public Image playIcon;
-
+    public GameObject[] overlaysToNotAllowControl;
     public List<Sprite> icons;
     //0 Play
     //1 Pause
@@ -62,10 +63,32 @@ public class AudioPlayerController : MonoBehaviour
             InfoSingleton.Instance.length = currentAudioDuration;
             InfoSingleton.Instance.currentTime = currentTime;
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        AreOverlaysActive();
+        if (Input.GetKeyDown(KeyCode.Space) && canUseSpace)
         {
             PlayStop();
         }
+    }
+
+    private void AreOverlaysActive()
+    {
+        bool areActive = false;
+        foreach (GameObject overlays in overlaysToNotAllowControl)
+        {
+            if(!areActive && overlays.activeSelf)
+            {
+                areActive = true;
+            }
+        }
+
+        if(areActive && sourceToControl.isPlaying)
+        {
+            print("llega aqui");
+            PlayStop();
+        }
+
+        canUseSpace = !areActive;
     }
 
     public void SetTime()

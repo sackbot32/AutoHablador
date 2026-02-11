@@ -7578,6 +7578,11 @@ MonoBehaviour:
   durationShow: {fileID: 995776304}
   timeText: {fileID: 1282406289}
   playIcon: {fileID: 801661490}
+  overlaysToNotAllowControl:
+  - {fileID: 612068063}
+  - {fileID: 923180035}
+  - {fileID: 1293003668}
+  - {fileID: 1581227775}
   icons:
   - {fileID: 21300000, guid: 43a6acc1410e96e42adbd83dd4feea67, type: 3}
   - {fileID: 21300000, guid: 318c2cbbeb766104f9aec74473745114, type: 3}
@@ -10338,7 +10343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -17.65, y: 90.90001}
+  m_AnchoredPosition: {x: -17.650024, y: 90.900024}
   m_SizeDelta: {x: 219.5245, y: 58.7833}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1282406289
@@ -12354,7 +12359,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0.00045776367, y: 0}
+  m_AnchoredPosition: {x: 0.000030517578, y: 0}
   m_SizeDelta: {x: 680, y: 160}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1569318696
@@ -14898,7 +14903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10.771606, y: -186}
+  m_AnchoredPosition: {x: 10.771637, y: -186}
   m_SizeDelta: {x: 240, y: 350}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1897677746
