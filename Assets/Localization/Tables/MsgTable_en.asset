@@ -39,7 +39,9 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 90215485034496
-    m_Localized: 'Video rendered at: {0}'
+    m_Localized: 'Video rendered at: {0}
+
+      Do you want to open the folder?'
     m_Metadata:
       m_Items: []
   - m_Id: 90979913715712

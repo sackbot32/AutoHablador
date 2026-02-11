@@ -8,6 +8,7 @@ using Emgu.CV;
 using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Helpers;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -186,6 +187,7 @@ public class CharRenderer : MonoBehaviour
         }
         if(imagePathList.Count > 0)
         {
+            whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
             progressBar.value += 1;
             string whichCodec = greenScreen ? "libx264" : "prores_ks";
             TurnImagesToFFMpeg(path,imagePathList, whichCodec);
@@ -209,6 +211,7 @@ public class CharRenderer : MonoBehaviour
 
     private void TurnImagesToFFMpeg(string savePath, List<string> imagePathList,string codec)
     {
+        
         string onlyVideoPath = savePath.Substring(0, savePath.LastIndexOf("\\")) + "\\tempVid." + videoFileExtension;
         if (audioOnRender)
         {
@@ -231,9 +234,16 @@ public class CharRenderer : MonoBehaviour
         }
         progressBar.value += 1;
         //Loader.Instance.GetLocalizedMessage("errorNotifLackImage")
-        whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
+        whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidTextDone");
         loadingBarParent.SetActive(false);
-        Loader.Instance.CreateNotif(Loader.Instance.GetLocalizedMessage("succNotifRenderComplete", new object[] { savePath }), NotifType.Success, "OK");
+        print(savePath.Substring(0, savePath.LastIndexOf("\\")));
+        Loader.Instance.CreateAssurance(Loader.Instance.GetLocalizedMessage("succNotifRenderComplete", new object[] { savePath }), () => {
+            if(Directory.Exists(savePath.Substring(0, savePath.LastIndexOf("\\"))))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", @savePath.Substring(0, savePath.LastIndexOf("\\")));
+                //System.Diagnostics.Process.Start("explorer.exe", @savePath);
+            }
+        });
     }
 
     private Texture2D FromTransparentToColor(Texture2D starter, UnityEngine.Color selectedColor)

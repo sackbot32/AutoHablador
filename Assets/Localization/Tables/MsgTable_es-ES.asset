@@ -41,7 +41,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 90215485034496
-    m_Localized: 'Video renderizado en: {0}'
+    m_Localized: "Video renderizado en: {0}\n\xBFQuiere abrir la carpeta?"
     m_Metadata:
       m_Items: []
   - m_Id: 90979913715712
