@@ -55,7 +55,6 @@ public class LoadNewAudio : MonoBehaviour
         InfoSingleton.Instance.talker.source.clip = clip;
         
         InfoSingleton.Instance.audioPlayerController.UpdateDurationSlider();
-        InfoSingleton.Instance.talker.UpdateAudioSliders(0, 1);
     }
 
     IEnumerator getAudioVolumeRange(AudioClip clip)

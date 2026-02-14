@@ -42,10 +42,11 @@ public class SaveFile : MonoBehaviour
 
         Directory.CreateDirectory(Loader.Instance.saveFilePath + "\\" + save.name);
         save.characterPortraits = InfoSingleton.Instance.talker.characterExpresions;
+        print($"MIN {InfoSingleton.Instance.minVol} MAX {InfoSingleton.Instance.maxVol} SENS {InfoSingleton.Instance.talker.volumeThreshold}");
         save.volumeSensitivity = InfoSingleton.Instance.talker.volumeThreshold;
         save.volumeRange = new float[2];
-        save.volumeRange[0] = InfoSingleton.Instance.talker.showLoudnessSlider.minValue;
-        save.volumeRange[1] = InfoSingleton.Instance.talker.showLoudnessSlider.maxValue;
+        save.volumeRange[0] = InfoSingleton.Instance.minVol;
+        save.volumeRange[1] = InfoSingleton.Instance.maxVol;
         foreach (CharacterPortraits invPor in save.characterPortraits)
         {
             if(invPor != null)
@@ -105,7 +106,10 @@ public class SaveFile : MonoBehaviour
             //filePath + "\\" + name + "\\" + "saveOf" + name + ".json"
             string json = new StreamReader(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
+            print($"MIN {load.volumeRange[0]} MAX {load.volumeRange[1]} SENS {load.volumeSensitivity}");
+
             InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
+            InfoSingleton.Instance.talker.rangeLimits.UpdateFields(load.volumeRange[0], load.volumeRange[1]);
             InfoSingleton.Instance.talker.UpdateAudioSliders(load.volumeRange[0],load.volumeRange[1]);
             InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
             //Loader.Instance.tasksForLoading.Add("loadAudio");
@@ -156,8 +160,8 @@ public class SaveFile : MonoBehaviour
         if (audioPath.Length <= 0)
         {
             
-            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav" );
-            InfoSingleton.Instance.audioPath = Loader.Instance.filePath + "\\" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav";
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(Loader.Instance.filePath + "/" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav" );
+            InfoSingleton.Instance.audioPath = Loader.Instance.filePath + "/" + Loader.Instance.GetLocalizedMessage("defaultAudioFilePathEnd") + ".wav";
         } else
         {
             InfoSingleton.Instance.audioLoader.LoadAudioFromPath(audioPath);

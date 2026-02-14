@@ -126,8 +126,12 @@ public class Talker : MonoBehaviour
 
     public void UpdateAudioSliders(float min,float max)
     {
+        print($"UpdateAudioSliders MIN {min} MAX {max}");
+        InfoSingleton.Instance.minVol = min;
+        InfoSingleton.Instance.maxVol = max;
         showLoudnessSlider.minValue = min;
         showLoudnessSlider.maxValue = max;
+        print($"loudnessSliders MIN {showLoudnessSlider.minValue} MAX {showLoudnessSlider.maxValue}");
         volumeThresholdSlider.minValue = min;
         volumeThresholdSlider.maxValue = max;
         rangeLimits.UpdateFields(min,max);

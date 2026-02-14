@@ -224,6 +224,7 @@ public class CharRenderer : MonoBehaviour
             var video = JoinImageSequenceWithCodec(onlyVideoPath, codec, framesPerSecond,imagePathList.ToArray());
             //FFMpegArguments.FromFileInput(imagePathList.ToArray(),false,options => options.WithFramerate(framesPerSecond).
             //WithVideoCodec(FFMpeg.GetCodec("apcn"))).OutputToFile(savePath);
+            print(InfoSingleton.Instance.audioPath);
             FFMpeg.ReplaceAudio(onlyVideoPath, InfoSingleton.Instance.audioPath,savePath);
             
         } else

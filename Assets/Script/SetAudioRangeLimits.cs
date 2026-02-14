@@ -9,12 +9,13 @@ public class SetAudioRangeLimits : MonoBehaviour
 
     public void UpdateFields(float min, float max)
     {
-        rangeFields[0].text = min + "";
-        rangeFields[1].text = max + "";
+        rangeFields[0].text = min.ToString();
+        rangeFields[1].text = max.ToString();
     }
 
     public void UpdateValues()
     {
+        
         bool canEnterMin = false;
         bool canEnterMax = false;
         string strMin = rangeFields[0].text;

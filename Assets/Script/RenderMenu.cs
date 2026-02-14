@@ -23,7 +23,7 @@ public class RenderMenu : MonoBehaviour
     private void OnEnable()
     {
         SetGreenScreen(toggles[0].isOn);
-        SetAudioRender(toggles[1].isOn);
+        SetAudio(toggles[1].isOn);
     }
 
 
@@ -32,9 +32,9 @@ public class RenderMenu : MonoBehaviour
         greenScreen = !green;
     }
 
-    public void SetAudioRender(bool auidi)
+    public void SetAudio(bool audio)
     {
-        usesAudio = auidi;
+        usesAudio = audio;
     }
 
     public void SetName(string nName)
