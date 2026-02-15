@@ -189,6 +189,10 @@ public class SaveFile : MonoBehaviour
                 InfoSingleton.Instance.talker.characterExpresions.Add(characterPortraits);
             }
         }
+        InfoSingleton.Instance.talker.rangeLimits.UpdateFields(0, 0.1f);
+        InfoSingleton.Instance.talker.UpdateAudioSliders(0, 0.1f);
+        InfoSingleton.Instance.talker.volumeThreshold = 0.05f;
+        InfoSingleton.Instance.talker.volumeThresholdSlider.value = 0.05f;
         buttonCreator.CreateButtons();
         projectName = name;
         Loader.Instance.tasksForLoading.Remove("newProject");
