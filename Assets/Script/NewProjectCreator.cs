@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,9 +24,15 @@ public class NewProjectCreator : MonoBehaviour
         Loader.Instance.NewProyect(projectName.text, audioPath, expresionJsonPath);
     }
 
+
+
     private void OnEnable()
     {
         ClearUpInfo();
+        if(projectListTransform.childCount > 0)
+        {
+            projectListTransform.GetChild(0).gameObject.GetComponent<ProjectReferenceForNew>().SetInfo(defaultImage, Loader.Instance.GetLocalizedMessageFromTable("PrefabStringTable", "defaultProyect"), () => SelectJson("", "Default"));
+        }
     }
     public void CallCreateProject()
     {
@@ -83,7 +90,8 @@ public class NewProjectCreator : MonoBehaviour
     public void CreateProjectList()
     {
         List<string> projectNames = ProjectSelectorCreator.GetAllProjects();
-        Instantiate(projectButton, projectListTransform).GetComponent<ProjectReferenceForNew>().SetInfo(defaultImage, "Default", () => SelectJson("", "Default"));
+        //TODO cambiar idioma
+        Instantiate(projectButton, projectListTransform).GetComponent<ProjectReferenceForNew>().SetInfo(defaultImage, Loader.Instance.GetLocalizedMessageFromTable("PrefabStringTable", "defaultProyect"), () => SelectJson("", "Default"));
         foreach (string name in projectNames)
         {
             string path = Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json";

@@ -38,6 +38,10 @@ MonoBehaviour:
     m_Localized: Cancelar
     m_Metadata:
       m_Items: []
+  - m_Id: 40957191224578048
+    m_Localized: Por defecto
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
