@@ -98,11 +98,14 @@ public class Talker : MonoBehaviour
 
     public Texture2D ReturnCharImageOnPPos(int pPos)
     {
-
         float pPosVolume = 0;
         pPosVolume = GetVolumeOnPPos(pPos);
         int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos/ (float)source.clip.frequency);
+        //Texture2D resultTex = pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
+        //FlipVertical
         return pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
+        //CharRenderer.FlipVertical(resultTex);
+        //return resultTex;
     }
 
     private float GetVolumeOnPPos(int pPos)

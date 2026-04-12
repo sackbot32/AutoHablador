@@ -4,13 +4,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Emgu.CV;
 using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Helpers;
+using FFMpegCore.Pipes;
+using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.Image;
 
 public class AlreadyGreenedImage 
 {
@@ -47,6 +52,8 @@ public class CharRenderer : MonoBehaviour
     List<string> imagePathList;
     string targetPath;
     private string videoFileExtension = "mov";
+
+    private List<IVideoFrame> videoFrames;
 
     private Coroutine currentCoroutine;
 
@@ -141,8 +148,9 @@ public class CharRenderer : MonoBehaviour
     }
 
     public IEnumerator RenderCouritine(string path,UnityEngine.Color colorBackground)
-    {
-
+    {;
+        videoFrames = new List<IVideoFrame>();
+        List<byte> byteList = new List<byte>();
         imagePathList = new List<string>();
         currentSize = new Size(InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).width, InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).height);
         
@@ -179,19 +187,29 @@ public class CharRenderer : MonoBehaviour
             {
                 beingSaved = starter;
             }
+            //beingSaved = FlipHorizontal(beingSaved);
+            
             renderedTextures.Add(beingSaved);
-            byte[] tempImageData = beingSaved.EncodeToPNG();
-            //Mat nMat = new Mat();
-            //CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
-            //textureMats.Add(nMat);
-            string numberStringed = num.ToString("000");
-            System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
+            byteList = beingSaved.GetRawTextureData().ToList();
+            float startPoint = (float)(beingSaved.height * beingSaved.width) * 4;
+            byteList.RemoveRange((int)startPoint, byteList.Count - (int)startPoint);
+            //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQUI
+
+            List<byte> pre = Reorient(byteList, beingSaved.width, beingSaved.height);
+            byte[] tempImageData = pre.Reverse<byte>().ToArray();
+            print("LENGHT " + tempImageData.Length);
+
+            videoFrames.Add(new ByteFrame(tempImageData,beingSaved.format,beingSaved.width,beingSaved.height));
+
+
+            string numberStringed = num.ToString("0000");
+            //System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
             imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");
             num++;
             progressBar.value += 1;
             yield return new WaitForSeconds(0.01f);
         }
-        if(imagePathList.Count > 0)
+        if(videoFrames.Count > 0)
         {
             
             progressBar.value += 1;
@@ -217,19 +235,31 @@ public class CharRenderer : MonoBehaviour
 
     private void TurnImagesToFFMpeg(string savePath, List<string> imagePathList,string codec)
     {
-        
-        string onlyVideoPath = savePath.Substring(0, savePath.LastIndexOf("\\")) + "\\tempVid." + videoFileExtension;
-        if (audioOnRender)
+        print("FRAMES LENGTH " + videoFrames.Count);
+        print("FRAMES POR SEGUNDO " + framesPerSecond);
+        RawVideoPipeSource videoFrameSource = new RawVideoPipeSource(videoFrames)
         {
-            var video = JoinImageSequenceWithCodec(onlyVideoPath, codec, framesPerSecond,imagePathList.ToArray());
-            //FFMpegArguments.FromFileInput(imagePathList.ToArray(),false,options => options.WithFramerate(framesPerSecond).
-            //WithVideoCodec(FFMpeg.GetCodec("apcn"))).OutputToFile(savePath);
-            print(InfoSingleton.Instance.audioPath);
-            FFMpeg.ReplaceAudio(onlyVideoPath, InfoSingleton.Instance.audioPath,savePath);
             
-        } else
+            FrameRate = framesPerSecond
+        };
+
+
+        string onlyVideoPath = savePath.Substring(0, savePath.LastIndexOf("\\")) + "\\tempVid." + videoFileExtension;
+        //JoinImageSequenceWithCodec(onlyVideoPath, codec, framesPerSecond,imagePathList.ToArray());
+        var video = FFMpegArguments.FromPipeInput(videoFrameSource)
+            .OutputToFile(onlyVideoPath, true, options => options
+                .WithFramerate(framesPerSecond).WithVideoCodec(codec).WithVariableBitrate(5))
+            .ProcessSynchronously();
+        //FFMpegArguments.FromFileInput(imagePathList.ToArray(),false,options => options.WithFramerate(framesPerSecond).
+        //WithVideoCodec(FFMpeg.GetCodec("apcn"))).OutputToFile(savePath);
+        print(InfoSingleton.Instance.audioPath);
+        string bothPath = savePath.Substring(0, savePath.LastIndexOf("\\")) + "\\tempVidAud." + videoFileExtension;
+        FFMpeg.ReplaceAudio(onlyVideoPath, InfoSingleton.Instance.audioPath, audioOnRender ? savePath : bothPath);
+
+
+        if (!audioOnRender)
         {
-            var video = JoinImageSequenceWithCodec(savePath, codec, framesPerSecond, imagePathList.ToArray());
+            FFMpeg.Mute(bothPath, savePath);
         }
         foreach (string path in imagePathList)
         {
@@ -238,6 +268,10 @@ public class CharRenderer : MonoBehaviour
         if (System.IO.File.Exists(onlyVideoPath))
         {
             System.IO.File.Delete(onlyVideoPath);
+        }
+        if (System.IO.File.Exists(bothPath))
+        {
+            System.IO.File.Delete(bothPath);
         }
         progressBar.value += 1;
         //Loader.Instance.GetLocalizedMessage("errorNotifLackImage")
@@ -274,6 +308,39 @@ public class CharRenderer : MonoBehaviour
         return toReturn;
     }
 
+    public static void FlipHorizontal(Texture2D original)
+    {
+        var originalPixels = original.GetPixels();
+
+        var newPixels = new UnityEngine.Color[originalPixels.Length];
+
+        for (int x = 0; x < original.width; x++)
+        {
+            for (int y = 0; y < original.height; y++)
+            {
+                newPixels[x + y * original.width] = originalPixels[(original.width - x - 1) + y * original.width];
+            }
+        }
+        original.SetPixels(newPixels);
+        original.Apply();
+    }
+
+    public static void FlipVertical(Texture2D original)
+    {
+        var originalPixels = original.GetPixels();
+
+        var newPixels = new UnityEngine.Color[originalPixels.Length];
+
+        for (int x = 0; x < original.width; x++)
+        {
+            for (int y = 0; y < original.height; y++)
+            {
+                newPixels[x + y * original.width] = originalPixels[x + (original.height - y - 1) * original.width];
+            }
+        }
+        original.SetPixels(newPixels);
+        original.Apply();
+    }
 
     public bool JoinImageSequenceWithCodec(string output, string videoCodec, double frameRate = 30, params string[] images)
     {
@@ -303,6 +370,8 @@ public class CharRenderer : MonoBehaviour
                 File.Copy(imagePath, destinationPath);
             }
 
+            
+
             return FFMpegArguments
                 .FromFileInput(Path.Combine(tempFolderName, $"%09d{fileExtension}"), false, options => options
                     .WithFramerate(frameRate))
@@ -315,6 +384,56 @@ public class CharRenderer : MonoBehaviour
         {
             Directory.Delete(tempFolderName, true);
         }
+    }
+
+
+    private List<byte> ShuffleTest(List<byte> bytes)
+    {
+        System.Random random = new System.Random();
+        List<byte> result = bytes;
+        int n = result.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = random.Next(n + 1);
+            byte value = result[k];
+            result[k] = result[n];
+            result[n] = value;
+
+        }
+        
+       
+
+        return result;
+
+    }
+
+    private List<byte> Reorient(List<byte> bytes, int width, int height)
+    {
+        List<byte> list = bytes;
+        List<byte> result = new List<byte>();
+
+
+
+        for (int i = 0; i < height; i++)
+        {
+            List<byte> widthToAdd = new List<byte>();
+            int j = 0;
+            int startPoint = (width*4) * i;
+            int endPoint = (width * 4) * (j+1);
+            print($"first {startPoint + j} last point {(width *4) - j}");
+            while(j < (width * 4))
+            {
+                widthToAdd.Add(bytes[startPoint +j]);
+
+                j++;
+            }
+            result.AddRange(widthToAdd.Reverse<byte>().ToList());
+        }
+        //print("AMOUNT DONE " + n + " THE AMOUNT USED " + amount);
+
+        return result;
+
     }
 
 
