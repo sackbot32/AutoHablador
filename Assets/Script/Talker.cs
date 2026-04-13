@@ -99,8 +99,12 @@ public class Talker : MonoBehaviour
     public Texture2D ReturnCharImageOnPPos(int pPos)
     {
         float pPosVolume = 0;
+        int expresionOnPPos = 0;
+        
+
         pPosVolume = GetVolumeOnPPos(pPos);
-        int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos/ (float)source.clip.frequency);
+        expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos / (float)source.clip.frequency);
+
         //Texture2D resultTex = pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
         //FlipVertical
         return pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
@@ -108,7 +112,23 @@ public class Talker : MonoBehaviour
         //return resultTex;
     }
 
-    private float GetVolumeOnPPos(int pPos)
+    public Texture2D ReturnCharImageOnPPos(int pPos, float frameVolume)
+    {
+        int expresionOnPPos = 0;
+
+
+        Loader.Instance.dispacher.Enqueue(() => {
+            expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos / (float)source.clip.frequency);
+
+        });
+        //Texture2D resultTex = pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
+        //FlipVertical
+        return frameVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
+        //CharRenderer.FlipVertical(resultTex);
+        //return resultTex;
+    }
+
+    public float GetVolumeOnPPos(int pPos)
     {
         float newValue = 0;
         source.clip.GetData(samples, pPos);
@@ -123,6 +143,7 @@ public class Talker : MonoBehaviour
         {
             newValue = 0f;
         }
+
 
         return newValue;
     }

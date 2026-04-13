@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.Localization.Tables;
+using PimDeWitte.UnityMainThreadDispatcher;
 
 public class Loader : MonoBehaviour
 {
@@ -26,9 +27,11 @@ public class Loader : MonoBehaviour
     public TableReference msgStringTable;
     public List<string> tasksForLoading;
 
+    public UnityMainThreadDispatcher dispacher;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        
         if (!PlayerPrefs.HasKey("bgR"))
         {
             PlayerPrefs.SetFloat("bgR", defaultBack.r);
@@ -37,6 +40,7 @@ public class Loader : MonoBehaviour
         }
         if(Loader.Instance == null)
         {
+            dispacher = GetComponent<UnityMainThreadDispatcher>();
             tasksForLoading = new List<string>();
             filePath = Application.persistentDataPath;
             saveFilePath = filePath + "\\Saves";
