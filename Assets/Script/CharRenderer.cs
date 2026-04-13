@@ -145,12 +145,12 @@ public class CharRenderer : MonoBehaviour
 
         imagePathList = new List<string>();
         currentSize = new Size(InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).width, InfoSingleton.Instance.talker.ReturnCharImageOnPPos(0).height);
-        
+        InfoSingleton.Instance.saveFile.SavePortraitImages();
         int num = 0;
         int total = (int)progressBar.maxValue - 2;
         string temporalFilesPath = path.Substring(0,path.LastIndexOf("\\"));
         print("temporalFiles " + temporalFilesPath);
-        print("Starting render");
+        print("Starting render");;
         for (int i = 0; i < InfoSingleton.Instance.talker.source.clip.samples; i = i + InfoSingleton.Instance.talker.source.clip.frequency/framesPerSecond)
         {
 
@@ -163,6 +163,7 @@ public class CharRenderer : MonoBehaviour
                 whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
             }
             Texture2D starter = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i);
+            string imgPath = InfoSingleton.Instance.talker.ReturnImagePath(i);
             Texture2D beingSaved;
             if (greenScreen)
             {
@@ -180,13 +181,14 @@ public class CharRenderer : MonoBehaviour
                 beingSaved = starter;
             }
             renderedTextures.Add(beingSaved);
-            byte[] tempImageData = beingSaved.EncodeToPNG();
+            //byte[] tempImageData = beingSaved.EncodeToPNG();
             //Mat nMat = new Mat();
             //CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
             //textureMats.Add(nMat);
-            string numberStringed = num.ToString("000");
-            System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
-            imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");
+            //string numberStringed = num.ToString("000");
+            //System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
+            //imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");
+            imagePathList.Add(imgPath);
             num++;
             progressBar.value += 1;
             yield return new WaitForSeconds(0.01f);
@@ -231,10 +233,10 @@ public class CharRenderer : MonoBehaviour
         {
             var video = JoinImageSequenceWithCodec(savePath, codec, framesPerSecond, imagePathList.ToArray());
         }
-        foreach (string path in imagePathList)
-        {
-            System.IO.File.Delete(path);
-        }
+        //foreach (string path in imagePathList)
+        //{
+        //    System.IO.File.Delete(path);
+        //}
         if (System.IO.File.Exists(onlyVideoPath))
         {
             System.IO.File.Delete(onlyVideoPath);

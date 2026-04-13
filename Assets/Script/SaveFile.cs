@@ -97,7 +97,43 @@ public class SaveFile : MonoBehaviour
         }
     }
 
+    public void SavePortraitImages()
+    {
+        foreach (CharacterPortraits invPor in InfoSingleton.Instance.talker.characterExpresions)
+        {
+            if (invPor != null)
+            {
+                string expresionPath = Loader.Instance.saveFilePath + "\\" + projectName + "\\" + invPor.expresionName;
+                if (!System.IO.File.Exists(expresionPath))
+                {
+                    Directory.CreateDirectory(expresionPath);
+                }
+                if (invPor.shutImagePath == null)
+                {
+                    invPor.shutImagePath = "";
+                }
+                if (invPor.shutImagePath.Length <= 0)
+                {
+                    byte[] shutImageData = invPor.shut.texture.EncodeToPNG();
+                    string path = expresionPath + "\\" + invPor.expresionName + "-shut.png";
+                    System.IO.File.WriteAllBytes(path, shutImageData);
+                    invPor.shutImagePath = path;
 
+                }
+                if (invPor.talkImagePath == null)
+                {
+                    invPor.talkImagePath = "";
+                }
+                if (invPor.talkImagePath.Length <= 0)
+                {
+                    byte[] talkImageData = invPor.talking.texture.EncodeToPNG();
+                    string path = expresionPath + "\\" + invPor.expresionName + "-talk.png";
+                    System.IO.File.WriteAllBytes(path, talkImageData);
+                    invPor.talkImagePath = path;
+                }
+            }
+        }
+    }
     public void LoadJson(string name)
     {
         if(System.IO.File.Exists(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json"))

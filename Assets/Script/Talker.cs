@@ -105,6 +105,18 @@ public class Talker : MonoBehaviour
         return pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
     }
 
+    public string ReturnImagePath(int pPos)
+    {
+        string result = "";
+        float pPosVolume = 0;
+        pPosVolume = GetVolumeOnPPos(pPos);
+        int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos / (float)source.clip.frequency);
+        result = pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talkImagePath : characterExpresions[expresionOnPPos].shutImagePath;
+        //result = result.Replace("/", "\\");
+        return result;
+
+    }
+
     private float GetVolumeOnPPos(int pPos)
     {
         float newValue = 0;
