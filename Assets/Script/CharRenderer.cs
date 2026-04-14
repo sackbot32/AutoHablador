@@ -243,9 +243,19 @@ public class CharRenderer : MonoBehaviour
     public void CancelRender()
     {
         StopCoroutine(currentCoroutine);
-        foreach (string path in imagePathList)
+        foreach (CharacterPortraits greenPor in tempGreenPortraits)
         {
-            System.IO.File.Delete(path);
+            //greenPor.talkImagePath
+            if (System.IO.File.Exists(greenPor.talkImagePath))
+            {
+                System.IO.File.Delete(greenPor.talkImagePath);
+
+            }
+            if (System.IO.File.Exists(greenPor.shutImagePath))
+            {
+                System.IO.File.Delete(greenPor.shutImagePath);
+
+            }
         }
         System.IO.File.Delete(targetPath);
     }
