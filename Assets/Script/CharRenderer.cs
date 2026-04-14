@@ -9,6 +9,7 @@ using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Helpers;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,6 +50,7 @@ public class CharRenderer : MonoBehaviour
     private string videoFileExtension = "mov";
 
     private Coroutine currentCoroutine;
+    private List<CharacterPortraits> tempGreenPortraits;
 
     private void Start()
     {
@@ -148,9 +150,21 @@ public class CharRenderer : MonoBehaviour
         InfoSingleton.Instance.saveFile.SavePortraitImages();
         int num = 0;
         int total = (int)progressBar.maxValue - 2;
-        string temporalFilesPath = path.Substring(0,path.LastIndexOf("\\"));
+        string temporalFilesPath = Loader.Instance.saveFilePath + "\\temp\\";
         print("temporalFiles " + temporalFilesPath);
+        tempGreenPortraits = new List<CharacterPortraits>();
+        for (int i = 0; i < InfoSingleton.Instance.talker.characterExpresions.Count; i++)
+        {
+            tempGreenPortraits.Add(new CharacterPortraits());
+            tempGreenPortraits[i].expresionName = InfoSingleton.Instance.talker.characterExpresions[i].expresionName;
+            tempGreenPortraits[i].shutImagePath = "";
+            tempGreenPortraits[i].talkImagePath = "";
+            tempGreenPortraits[i].shut = null;
+            tempGreenPortraits[i].talking = null;
+        }
+
         print("Starting render");;
+        
         for (int i = 0; i < InfoSingleton.Instance.talker.source.clip.samples; i = i + InfoSingleton.Instance.talker.source.clip.frequency/framesPerSecond)
         {
 
@@ -163,33 +177,53 @@ public class CharRenderer : MonoBehaviour
                 whatIsLoading.text = loadingTextBase + Loader.Instance.GetLocalizedMessage("loadRenderImageToVidText");
             }
             Texture2D starter = InfoSingleton.Instance.talker.ReturnCharImageOnPPos(i);
-            string imgPath = InfoSingleton.Instance.talker.ReturnImagePath(i);
-            Texture2D beingSaved;
-            if (greenScreen)
+            
+            
+            if (!greenScreen)
             {
-                AlreadyGreenedImage alreadyGreen = greenedImages.Find(x => x.original == starter);
-                if (alreadyGreen != null)
-                {
-                    beingSaved = alreadyGreen.greenedImage;
-                } else
-                {
-                    beingSaved = FromTransparentToColor(starter, colorBackground);
-                }
-                    
+                string imgPath = InfoSingleton.Instance.talker.ReturnImagePath(i);
+                imagePathList.Add(imgPath);
             } else
             {
-                beingSaved = starter;
+                Texture2D beingSaved;
+                CharacterPortraits currentPorToGreen = tempGreenPortraits.Find(x => x.expresionName == InfoSingleton.Instance.talker.GetExpresionNameOnPpos(i));
+                bool isTalking = InfoSingleton.Instance.talker.isTalkingAtPpos(i);
+                int indexOfPor = tempGreenPortraits.IndexOf(currentPorToGreen);
+                string imgPath = "";
+                if (isTalking)
+                {
+                    if(currentPorToGreen.talkImagePath.Length == 0)
+                    {
+                        beingSaved = FromTransparentToColor(starter, colorBackground);
+                        string resultingPath = temporalFilesPath + currentPorToGreen.expresionName + "-talk.png";
+                        System.IO.File.WriteAllBytes(resultingPath, beingSaved.EncodeToPNG());
+                        currentPorToGreen.talkImagePath = resultingPath;
+                        tempGreenPortraits[indexOfPor] = currentPorToGreen;
+                        imgPath = resultingPath;
+                    } else
+                    {
+                        imgPath = currentPorToGreen.talkImagePath;
+                    }
+                } else
+                {
+                    if (currentPorToGreen.shutImagePath.Length == 0)
+                    {
+                        beingSaved = FromTransparentToColor(starter, colorBackground);
+                        string resultingPath = temporalFilesPath + currentPorToGreen.expresionName + "-shut.png";
+                        System.IO.File.WriteAllBytes(resultingPath, beingSaved.EncodeToPNG());
+                        currentPorToGreen.shutImagePath = resultingPath;
+                        tempGreenPortraits[indexOfPor] = currentPorToGreen;
+                        imgPath = resultingPath;
+                    }
+                    else
+                    {
+                        imgPath = currentPorToGreen.shutImagePath;
+                    }
+                }
+                imagePathList.Add(imgPath);
             }
-            renderedTextures.Add(beingSaved);
-            //byte[] tempImageData = beingSaved.EncodeToPNG();
-            //Mat nMat = new Mat();
-            //CvInvoke.Imdecode(tempImageData,Emgu.CV.CvEnum.ImreadModes.Unchanged,nMat);
-            //textureMats.Add(nMat);
-            //string numberStringed = num.ToString("000");
-            //System.IO.File.WriteAllBytes(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png", tempImageData);
-            //imagePathList.Add(temporalFilesPath + "\\imagenNumero-" + numberStringed + ".png");
-            imagePathList.Add(imgPath);
-            num++;
+
+                num++;
             progressBar.value += 1;
             yield return new WaitForSeconds(0.01f);
         }
@@ -233,10 +267,20 @@ public class CharRenderer : MonoBehaviour
         {
             var video = JoinImageSequenceWithCodec(savePath, codec, framesPerSecond, imagePathList.ToArray());
         }
-        //foreach (string path in imagePathList)
-        //{
-        //    System.IO.File.Delete(path);
-        //}
+        foreach (CharacterPortraits greenPor in tempGreenPortraits)
+        {
+            //greenPor.talkImagePath
+            if (System.IO.File.Exists(greenPor.talkImagePath))
+            {
+                System.IO.File.Delete(greenPor.talkImagePath);
+
+            }
+            if (System.IO.File.Exists(greenPor.shutImagePath))
+            {
+                System.IO.File.Delete(greenPor.shutImagePath);
+
+            }
+        }
         if (System.IO.File.Exists(onlyVideoPath))
         {
             System.IO.File.Delete(onlyVideoPath);

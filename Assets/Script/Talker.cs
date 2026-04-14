@@ -102,6 +102,7 @@ public class Talker : MonoBehaviour
         float pPosVolume = 0;
         pPosVolume = GetVolumeOnPPos(pPos);
         int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos/ (float)source.clip.frequency);
+        print("ES NULL? " + (characterExpresions[expresionOnPPos].talking == null).ToString());
         return pPosVolume > volumeThreshold ? characterExpresions[expresionOnPPos].talking.texture : characterExpresions[expresionOnPPos].shut.texture;
     }
 
@@ -117,7 +118,20 @@ public class Talker : MonoBehaviour
 
     }
 
-    private float GetVolumeOnPPos(int pPos)
+    public string GetExpresionNameOnPpos(int pPos)
+    {
+        int expresionOnPPos = InfoSingleton.Instance.changer.ReturnExpresionOnTime(pPos / (float)source.clip.frequency);
+        return characterExpresions[expresionOnPPos].expresionName;
+    }
+
+    public bool isTalkingAtPpos (int pPos)
+    {
+        float pPosVolume = 0;
+        pPosVolume = GetVolumeOnPPos(pPos);
+        return pPosVolume > volumeThreshold;
+    }
+
+    public float GetVolumeOnPPos(int pPos)
     {
         float newValue = 0;
         source.clip.GetData(samples, pPos);

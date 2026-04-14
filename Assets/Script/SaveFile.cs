@@ -60,25 +60,19 @@ public class SaveFile : MonoBehaviour
                 {
                     invPor.shutImagePath = "";
                 }
-                if (invPor.shutImagePath.Length <= 0)
-                {
                     byte[] shutImageData = invPor.shut.texture.EncodeToPNG();
-                    string path = expresionPath + "\\" + invPor.expresionName + "-shut.png";
-                    System.IO.File.WriteAllBytes(path, shutImageData);
-                    invPor.shutImagePath = path;
+                    string shutPath = expresionPath + "\\" + invPor.expresionName + "-shut.png";
+                    System.IO.File.WriteAllBytes(shutPath, shutImageData);
+                    invPor.shutImagePath = shutPath;
 
-                }
                 if (invPor.talkImagePath == null)
                 {
                     invPor.talkImagePath = "";
                 }
-                if (invPor.talkImagePath.Length <= 0)
-                {
                     byte[] talkImageData = invPor.talking.texture.EncodeToPNG();
-                    string path = expresionPath + "\\" + invPor.expresionName + "-talk.png";
-                    System.IO.File.WriteAllBytes(path, talkImageData);
-                    invPor.talkImagePath = path;
-                }
+                    string talkPath = expresionPath + "\\" + invPor.expresionName + "-talk.png";
+                    System.IO.File.WriteAllBytes(talkPath, talkImageData);
+                    invPor.talkImagePath = talkPath;
             }
             
             
@@ -112,25 +106,20 @@ public class SaveFile : MonoBehaviour
                 {
                     invPor.shutImagePath = "";
                 }
-                if (invPor.shutImagePath.Length <= 0)
-                {
                     byte[] shutImageData = invPor.shut.texture.EncodeToPNG();
-                    string path = expresionPath + "\\" + invPor.expresionName + "-shut.png";
-                    System.IO.File.WriteAllBytes(path, shutImageData);
-                    invPor.shutImagePath = path;
+                    string shutPath = expresionPath + "\\" + invPor.expresionName + "-shut.png";
+                    System.IO.File.WriteAllBytes(shutPath, shutImageData);
+                    invPor.shutImagePath = shutPath;
 
-                }
                 if (invPor.talkImagePath == null)
                 {
                     invPor.talkImagePath = "";
                 }
-                if (invPor.talkImagePath.Length <= 0)
-                {
                     byte[] talkImageData = invPor.talking.texture.EncodeToPNG();
-                    string path = expresionPath + "\\" + invPor.expresionName + "-talk.png";
-                    System.IO.File.WriteAllBytes(path, talkImageData);
-                    invPor.talkImagePath = path;
-                }
+                    string talkPath = expresionPath + "\\" + invPor.expresionName + "-talk.png";
+                    System.IO.File.WriteAllBytes(talkPath, talkImageData);
+                    invPor.talkImagePath = talkPath;
+
             }
         }
     }
