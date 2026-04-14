@@ -224,7 +224,7 @@ public class CharRenderer : MonoBehaviour
 
                 num++;
             progressBar.value += 1;
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.001f);
         }
         if(imagePathList.Count > 0)
         {

@@ -30,6 +30,9 @@ public class SaveFile : MonoBehaviour
     public string projectName;
     public ExpresionButtonCreator buttonCreator;
     public List<CharacterPortraits> defaultCharacterPortraits;
+    //We have it here so it wont be triggered
+    public AudioClip debugAudioClip;
+
 
     private void Awake()
     {
@@ -131,6 +134,7 @@ public class SaveFile : MonoBehaviour
             //filePath + "\\" + name + "\\" + "saveOf" + name + ".json"
             string json = new StreamReader(Loader.Instance.saveFilePath + "\\" + name + "\\" + "saveOf" + name + ".json").ReadToEnd();
             SaveClass load = JsonUtility.FromJson<SaveClass>(json);
+            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
             print($"MIN {load.volumeRange[0]} MAX {load.volumeRange[1]} SENS {load.volumeSensitivity}");
 
             InfoSingleton.Instance.talker.volumeThreshold = load.volumeSensitivity;
@@ -138,7 +142,6 @@ public class SaveFile : MonoBehaviour
             InfoSingleton.Instance.talker.UpdateAudioSliders(load.volumeRange[0],load.volumeRange[1]);
             InfoSingleton.Instance.talker.volumeThresholdSlider.value = load.volumeSensitivity;
             //Loader.Instance.tasksForLoading.Add("loadAudio");
-            InfoSingleton.Instance.audioLoader.LoadAudioFromPath(load.audioPath);
             //Clear expresion for new ones
             InfoSingleton.Instance.talker.characterExpresions = new List<CharacterPortraits>();
             //Get expresions
@@ -225,6 +228,11 @@ public class SaveFile : MonoBehaviour
 
     IEnumerator PutSliders(List<ExpresionTime> loaded)
     {
+        while(InfoSingleton.Instance.talker.source.clip == debugAudioClip)
+        {
+            print("has lenght");
+            yield return new WaitForSeconds(0.01f);
+        }
         foreach (ExpresionTime time in loaded)
         {
             ExpresionTimeSlider slider = InfoSingleton.Instance.talker.characterExpresions[time.whichExpresion].ownedButton.AddExpresion(time.timeToStart);
